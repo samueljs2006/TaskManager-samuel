@@ -6,6 +6,8 @@ import Presentacion.*
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.util.Locale
 
 class ActividadService {
     private val consola = ConsolaUI()
@@ -17,9 +19,46 @@ class ActividadService {
         usuariosConActividades()
         do {
             consola.mostrarMenu()
-            val opcion = consola.pedirOpcion("Elige una opción", 0, 4)
+            val opcion = consola.pedirOpcion("Elige una opción", 0, 6)
             gestionarOpcion(opcion)
         } while (opcion != 0)
+    }
+
+    private fun agregarSubtarea() {
+        try {
+            // Listar las tareas disponibles para elegir la tarea madre
+            consola.listarTareas(repo.tareas)
+
+            // Pedir al usuario que seleccione la tarea madre por ID
+            val idTareaMadre = consola.pedirInfo("Introduce el ID de la tarea madre a la que deseas agregar una subtarea:").toIntOrNull()
+            val tareaMadre = repo.tareas.find { it.getIdActividad().toInt() == idTareaMadre }
+
+            if (tareaMadre != null) {
+                // Verificar si ya tiene una subtarea
+                if (tareaMadre.subTarea != null) {
+                    println("¡Error! La tarea madre ya tiene una subtarea asignada.")
+                    return
+                }
+
+                // Crear la subtarea
+                val subtarea = Tarea.creaInstancia(
+                    consola.pedirInfo("Descripción de la subtarea:"),
+                    consola.pedirInfo("Usuario asignado:"),
+                    consola.pedirEtiqueta()
+                )
+
+                // Asignar la subtarea a la tarea madre
+                tareaMadre.subTarea = subtarea
+                repo.tareas.add(subtarea) // Guardar la subtarea en el repositorio
+
+                println("¡Subtarea añadida con éxito!")
+                historial.agregarHistorial("Subtarea agregada a la tarea ${tareaMadre.getIdActividad()}")
+            } else {
+                println("Error: No se encontró la tarea madre con el ID proporcionado.")
+            }
+        } catch (e: Exception) {
+            println("¡Error! Detalle: ${e.message}")
+        }
     }
 
     private fun usuariosConActividades() {
@@ -37,24 +76,15 @@ class ActividadService {
     }
 
     private fun cambiarEstado(tarea: Tarea) {
-        val id = tarea.getIdActividad()
-        var estadoValido = false
-        do {
-            val estadoNuevo = consola.pedirInfo("CAMBIE EL ESTADO DE LA TAREA: ABIERTA, EN_PROGRESO, FINALIZADA")
-            val estado = EstadoTarea.getEstado(estadoNuevo)
-            if (estado != null) {
-                tarea.estado = estado
-
-                if (estado in EstadoTarea.entries) {
-                    repo.cambiarEstado(tarea,historial,estado)
-                }
-
-                estadoValido = true
-            } else {
-                println("¡Error! Estado no válido, vuelve a intentarlo.")
-                historial.agregarHistorial("Error de estado no válido, se vuelve a intentar")
-            }
-        } while (!estadoValido)
+        val estadoNuevo = consola.pedirInfo("CAMBIE EL ESTADO DE LA TAREA: ABIERTA, EN_PROGRESO, FINALIZADA")
+        val estado = EstadoTarea.getEstado(estadoNuevo)
+        if (estado != null) {
+            tarea.actualizarEstado(estado)
+            repo.cambiarEstado(tarea, historial, estado)
+            println("¡Estado de la tarea y su subtarea actualizado con éxito!")
+        } else {
+            println("¡Error! Estado no válido.")
+        }
     }
 
     private fun filtradoPorTipo(){
@@ -242,12 +272,51 @@ class ActividadService {
         }while(opcion != 0)
     }
 
+    private fun resumen() {
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val hoy = LocalDate.now()
+        val manana = hoy.plusDays(1)
+        val semana = hoy.get(WeekFields.of(Locale.getDefault()).weekOfYear())
+        val mes = hoy.monthValue
+
+        // Filtrar actividades por fecha
+        val actividadesHoy = repo.actividades.filter {
+            LocalDate.parse(it.fecha, formatter) == hoy
+        }
+        val actividadesManana = repo.actividades.filter {
+            LocalDate.parse(it.fecha, formatter) == manana
+        }
+        val actividadesSemana = repo.actividades.filter {
+            val fechaActividad = LocalDate.parse(it.fecha, formatter)
+            fechaActividad.get(WeekFields.of(Locale.getDefault()).weekOfYear()) == semana
+        }
+        val actividadesMes = repo.actividades.filter {
+            val fechaActividad = LocalDate.parse(it.fecha, formatter)
+            fechaActividad.monthValue == mes
+        }
+
+        // Imprimir resumen
+        println("--------------------------------------------------")
+        println("TOTAL DE TAREAS MADRES: ${repo.actividades.size}")
+        println("TOTAL DE EVENTOS: ${repo.eventos.size}")
+        println("EN TOTAL ${repo.actividades.size} ACTIVIDADES REALIZADAS")
+        println("--------------------------------------------------")
+        println("ACTIVIDADES PARA HOY: ${actividadesHoy.size}")
+        println("ACTIVIDADES PARA MAÑANA: ${actividadesManana.size}")
+        println("ACTIVIDADES PARA ESTA SEMANA: ${actividadesSemana.size}")
+        println("ACTIVIDADES PARA ESTE MES: ${actividadesMes.size}")
+        println("--------------------------------------------------")
+        historial.agregarHistorial("Se ha mirado el resumen del programa")
+    }
+
     private fun gestionarOpcion(opcion: Int) {
         when (opcion) {
             1 -> anadirActividad()
             2 -> listarActividades()
             3 -> cambiarEstado(pedirIdTarea())
             4 -> filtrar()
+            5-> agregarSubtarea()
+            6-> resumen()
         }
     }
 

@@ -17,7 +17,6 @@ class RepoActividades(
         cargarActividades()
     }
 
-
     fun cambiarEstado(tarea:Tarea,historial: ControlDeHistorial,estadoTarea: EstadoTarea){
         val id = tarea.getIdActividad()
         tarea.estado = estadoTarea

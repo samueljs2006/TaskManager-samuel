@@ -22,6 +22,8 @@ class ConsolaUI: Consola {
         println("2) Listar todas las actividades")
         println("3) Cambiar estado tarea")
         println("4) Filtrar actividades")
+        println("5) Agregar subtarea")
+        println("6) MOSTRAR RESUMEN")
         println("0) SALIR")
         println("-----------------------------------------")
     }
@@ -72,7 +74,7 @@ class ConsolaUI: Consola {
      * @return la actividad creada o nulo en caso de dar error (se controla afuera)
      */
 
-    private fun pedirEtiqueta(): EtiquetasTareas{
+    internal fun pedirEtiqueta(): EtiquetasTareas{
         for(etiqueta in EtiquetasTareas.entries){
             println(etiqueta)
         }
@@ -88,9 +90,13 @@ class ConsolaUI: Consola {
         return etiqueta
     }
 
-    fun listarTareas(tareas: MutableList<Tarea>){
-        for(tarea in tareas){
+    fun listarTareas(tareas: MutableList<Tarea>) {
+        for (tarea in tareas) {
             println(tarea.obtenerDetalle())
+            tarea.subTarea?.let {
+                println("  Subtarea:")
+                println("    - ${it.obtenerDesc()}${it.obtenerUsuario()}${it.estado}")
+            }
         }
     }
 
@@ -158,13 +164,6 @@ class ConsolaUI: Consola {
         return opcion
     }
 
-    /**
-     * Funcion listarActividades
-     * Listara las actividades que haya en la lista usando el metodo de obtener detalles
-     *
-     * @param actividades-> Lista mutable de las actividades
-     */
-
     fun preguntarSeguir(): Boolean {
         val opciones = mapOf("S" to true, "N" to false)
         var seguir: Boolean? = null
@@ -185,8 +184,27 @@ class ConsolaUI: Consola {
 
 
     override fun listarActividades(actividades: MutableList<Actividad>) {
-        for(actividad in actividades){
-            println(actividad.obtenerDetalle())
+        for (actividad in actividades) {
+            when (actividad) {
+                is Tarea -> {
+                    println("ID: ${actividad.getIdActividad()}, Usuario: ${actividad.obtenerUsuario()}, Descripción: ${actividad.obtenerDesc()}")
+
+                    // Comprobar si tiene una subtarea
+                    if (actividad.subTarea == null) {
+                        println("  -> No hay subtarea asociada.")
+                    } else {
+                        // Mostrar los detalles de la subtarea
+                        val subTarea = actividad.subTarea!!
+                        println("  -> Subtarea:")
+                        println("      - Descripción: ${subTarea.obtenerDesc()}")
+                        println("      - Usuario: ${subTarea.obtenerUsuario()}")
+                        println("      - Etiqueta: ${subTarea.etiqueta}")
+                    }
+                }
+                is Evento-> {
+                    println(actividad.obtenerDetalle())
+                }
+            }
         }
     }
 }
