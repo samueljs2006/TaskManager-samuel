@@ -1,8 +1,11 @@
 package Servicios
 
 import AccesoDatos.RepoActividades
+import AccesoDatos.RepoUsuarios
 import Dominio.EstadoTarea
+import Dominio.Evento
 import Dominio.Tarea
+import Dominio.Usuario
 import Presentacion.ConsolaUI
 
 /**
@@ -12,6 +15,8 @@ import Presentacion.ConsolaUI
 class ActividadService {
     val consola = ConsolaUI()
     val repo = RepoActividades()
+    val servicioUsuario = UsuariosService(consola)
+
     /**
      * Funcion que gestionara el programa
      * Se hara un bucle donde mientras la opcion no sea 0, seguirá el programa
@@ -19,7 +24,23 @@ class ActividadService {
      * Se pide opcion
      * Se gestiona esa opcion
      */
+
+    fun usuariosConActividades(){
+        for(usuario in servicioUsuario.usuariosRepo.usuarios){
+            for(actividad in repo.actividades){
+                if(actividad.obtenerUsuario() == usuario.nombre){
+                    usuario.repoActividades.actividades.add(actividad)
+                    when(actividad){
+                        is Tarea-> usuario.repoActividades.tareas.add(actividad)
+                        is Evento-> usuario.repoActividades.eventos.add(actividad)
+                    }
+                }
+            }
+        }
+    }
+
     fun gestionarPrograma(){
+        usuariosConActividades()
         do{
             var opcion = -1
             consola.mostrarMenu()
@@ -31,7 +52,7 @@ class ActividadService {
     /**
      * Funcion privada que gestionara la opcion introducida
      * Si es 0 sale
-     * Si es 1 aniade activiadad a la lista
+     * Si es 1 aniade actividad a la lista
      * Si es 2 lista las actividades
      * @param opcion-> Opcion introducida
      */
@@ -91,6 +112,7 @@ class ActividadService {
                 if(tarea.estado.toString().uppercase() == "CERRADA"){
                     repo.actividades.remove(tarea)
                     repo.tareas.remove(tarea)
+                    println("¡Tarea cerrada con éxito!")
                 }
 
                 estadoValido = true
@@ -106,10 +128,10 @@ class ActividadService {
             return
         }
 
-        val actividad = consola.crearActividad(opcion,repo)
+        val actividad = consola.crearActividad(opcion,repo,servicioUsuario.usuariosRepo)
 
         if(actividad != null){
-            repo.actividades.add(actividad)
+            repo.aniadirActividad(actividad)
         }
         Thread.sleep(2000)
     }
@@ -120,12 +142,83 @@ class ActividadService {
      * el metodo listarActividades de la clase padre.
      * Hace una pausa luego de eso para poder mirar bien.
      */
-    private fun listarActividades(){
+
+    private fun listarTodas(){
         consola.listarActividades(repo.actividades)
         Thread.sleep(5000)
     }
+
+    private fun comprobarUsuario(usuarioIntroducido:String):Boolean{
+        var existe = false
+
+        for(usuario in servicioUsuario.usuariosRepo.usuarios){
+            if(usuario.nombre == usuarioIntroducido){
+                existe = true
+            }
+        }
+        return existe
+    }
+
+    private fun pedirUsuario():Usuario?{
+        var seguir = true
+        var usuario: Usuario? = null
+
+        do {
+            println("ENTER VACÍO -> LISTAR ANÓNIMAS")
+            println("0 PARA SALIR")
+            var nombreUsuario = consola.pedirInfo("Introduzca el nombre de usuario >> ").trim()
+
+            if(nombreUsuario.trim().isEmpty()){
+                nombreUsuario = "Anónimo"
+            }
+
+            val existe = comprobarUsuario(nombreUsuario)
+
+            if(!existe){
+                println("El usuario no existe...")
+                seguir = consola.preguntarSeguir()
+            }
+            else{
+                println("¡Usuario $nombreUsuario encontrado!")
+                usuario = servicioUsuario.usuariosRepo.usuarios.find { it.nombre == nombreUsuario }
+                seguir = false
+            }
+        }while(seguir)
+        return usuario
+    }
+
+    private fun listarPorUsuario(){
+        val usuario = pedirUsuario()
+
+        if(usuario != null){
+            consola.listarActividades(usuario.repoActividades.actividades)
+        }
+
+        else{
+            return
+        }
+    }
+
+    private fun listarActividades(){
+        var opcion = -1
+
+        do {
+            println("LISTADO DE ACTIVIDADES")
+            println("1) Listar todas las actividades")
+            println("2) Listar actividades por usuario")
+            opcion = consola.pedirOpcion("",1,2)
+
+            when(opcion){
+                1-> listarTodas()
+                2-> listarPorUsuario()
+            }
+
+        }while(opcion!= 0)
+    }
+
     companion object{
         val service = ActividadService()
+
         fun iniciarPrograma(){
             service.gestionarPrograma()
         }

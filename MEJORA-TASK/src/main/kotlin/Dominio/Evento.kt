@@ -8,9 +8,10 @@ package Dominio
 
 class Evento private constructor(
     descripcion: String,
+    usuario:String,
     private val ubicacion: String,
     private val fecha: String
-):Actividad(descripcion) {
+):Actividad(descripcion,usuario) {
     init{
         require(Utils.esFechaValida(fecha)){"La fecha tiene que tener un formato válida (dd-MM-yyyy)"}
     }
@@ -22,7 +23,7 @@ class Evento private constructor(
     override var fechaCreacion = fecha
 
     override fun obtenerDetalle(): String {
-        return super.obtenerDetalle() + "[Fecha: <$fecha>, Ubicación: <$ubicacion> Fecha de creación: $fecha]"
+        return super.obtenerDetalle() + ";Fecha: <$fecha>;Ubicación: <$ubicacion>"
     }
 
     init{
@@ -38,8 +39,8 @@ class Evento private constructor(
          * manera
          * @return Devuelve un objeto instanciado de la clase evento
          */
-        fun creaInstancia(descripcion:String,ubicacion:String,fecha:String):Evento{
-            return Evento(descripcion,ubicacion,fecha)
+        fun creaInstancia(descripcion:String,usuario:String,ubicacion:String,fecha:String):Evento{
+            return Evento(descripcion,usuario,ubicacion,fecha)
         }
     }
 }

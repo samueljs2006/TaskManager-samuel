@@ -22,6 +22,7 @@ abstract class CalculoId() {
                 listaFecha.put(fecha,id)
                 return id
             }
+
             else{
                 val id = listaFecha[fecha]!!
                 return id

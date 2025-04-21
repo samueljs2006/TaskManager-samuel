@@ -1,7 +1,8 @@
 package Dominio
 
 abstract class Actividad(
-    private val descripcion:String
+    private val descripcion:String,
+    private val usuario:String
 ) {
     /*Al inicializar la clase se comprobará que la descripción no está vacía*/
     init{
@@ -18,12 +19,16 @@ abstract class Actividad(
         return id
     }
 
+    open fun obtenerUsuario():String{
+        return usuario
+    }
+
     /**
      * Función obtener detalle
      * Es open para poder usarlo fuera de las clases
      * @return String que contendrá el id y la descripción
      */
     open fun obtenerDetalle():String{
-        return "<$id> - <$descripcion>"
+        return "Usuario:<${usuario}>;<$id>;<$descripcion>"
     }
 }

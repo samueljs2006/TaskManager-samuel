@@ -1,9 +1,11 @@
 package Presentacion
 
 import AccesoDatos.RepoActividades
+import AccesoDatos.RepoUsuarios
 import Dominio.Actividad
 import Dominio.Evento
 import Dominio.Tarea
+import Dominio.Usuario
 import Servicios.ActividadService
 
 /**
@@ -27,6 +29,31 @@ class ConsolaUI: Consola {
      * @param msj-> Mensaje personalizado
      * @return Devuelve la información puesta por el usuario
      */
+
+    fun pedirUsuario(repo: RepoUsuarios):Usuario{
+        val usuarioNombre = pedirInfo("Introduzca el usuario al que asignar Actividad")
+        var encontrado = false
+        var usuarioPedido:Usuario? = null
+
+        do {
+            for (usuario in repo.usuarios) {
+                if (usuario.nombre == usuarioNombre) {
+                    println("¡Usuario $usuarioNombre encontrado!")
+                    usuarioPedido = usuario
+                    encontrado = true
+                }
+            }
+
+            if (!encontrado) {
+                println("Usuario $usuarioNombre no encontrado, creando...")
+                repo.agregarUsuario(Usuario.creaInstancia(usuarioNombre))
+                usuarioPedido = repo.usuarios.find { it.nombre == usuarioNombre }
+            }
+
+        }while(usuarioPedido == null)
+
+        return usuarioPedido
+    }
     override fun pedirInfo(msj: String): String {
         println(msj)
         print(">> ")
@@ -42,17 +69,22 @@ class ConsolaUI: Consola {
      * @param opcion-> Opcion introducida por el usuario
      * @return la actividad creada o nulo en caso de dar error (se controla afuera)
      */
-    override fun crearActividad(opcion:Int,repo:RepoActividades):Actividad? {
+
+    override fun crearActividad(opcion:Int,repo:RepoActividades,repoUser: RepoUsuarios):Actividad? {
         var actividad:Actividad? = null
         try {
             when (opcion) {
                 1 -> {
-                    actividad = Tarea.creaInstancia(pedirInfo("La descripción de la tarea"))
+                    actividad = Tarea.creaInstancia(
+                        pedirInfo("La descripción de la tarea"),
+                        pedirUsuario(repoUser).nombre
+                    )
                     repo.tareas.add(actividad)
                 }
                 2 ->{
                     actividad = Evento.creaInstancia(
                         pedirInfo("La descripción del evento"),
+                        pedirUsuario(repoUser).nombre,
                         pedirInfo("La ubicación del evento"),
                         pedirInfo("La fecha en la que sucederá el evento")
                     )
@@ -100,6 +132,26 @@ class ConsolaUI: Consola {
      *
      * @param actividades-> Lista mutable de las actividades
      */
+
+    fun preguntarSeguir(): Boolean {
+        val opciones = mapOf("S" to true, "N" to false)
+        var seguir: Boolean? = null
+
+        do {
+            println("¿Deseas seguir? S/N >> ")
+            val siono = pedirInfo("").trim().uppercase()
+
+            seguir = opciones[siono]
+
+            if (seguir == null) {
+                println("RESPUESTA DADA DE FORMA INCORRECTA, VUELVE A ESCRIBIR")
+            }
+        } while (seguir == null)
+
+        return seguir
+    }
+
+
     override fun listarActividades(actividades: MutableList<Actividad>) {
         for(actividad in actividades){
             println(actividad.obtenerDetalle())

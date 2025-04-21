@@ -5,8 +5,9 @@ package Dominio
  * @param descripcion-> String con la descripción de a tarea heredada de actividad
  */
 class Tarea private constructor(
-    descripcion:String
-): Actividad(descripcion) {
+    descripcion:String,
+    usuario:String
+): Actividad(descripcion,usuario) {
     /*El estado se inicializará como tarea abierta*/
     var estado = EstadoTarea.ABIERTA
 
@@ -16,7 +17,7 @@ class Tarea private constructor(
      * @return String
      */
     override fun obtenerDetalle():String{
-        return super.obtenerDetalle() + "[Estado: <$estado>]"
+        return super.obtenerDetalle() + ";Estado: <$estado>"
     }
 
     companion object{
@@ -28,8 +29,8 @@ class Tarea private constructor(
          * manera
          * @return Devuelve un objeto instanciado de la clase tarea.
          */
-        fun creaInstancia(descripcion:String):Tarea{
-            return Tarea(descripcion)
+        fun creaInstancia(descripcion:String,usuario:String):Tarea{
+            return Tarea(descripcion,usuario)
         }
     }
 
