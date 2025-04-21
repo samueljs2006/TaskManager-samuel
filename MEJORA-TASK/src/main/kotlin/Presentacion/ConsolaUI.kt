@@ -1,0 +1,108 @@
+package Presentacion
+
+import AccesoDatos.RepoActividades
+import Dominio.Actividad
+import Dominio.Evento
+import Dominio.Tarea
+import Servicios.ActividadService
+
+/**
+ * Esta clase hereda los metodos de consola para desarrolarlos.
+ * Una vez desarrollado los metodos, estos pasaran a usarse por el servicio heredando esta clase.
+ */
+class ConsolaUI: Consola {
+
+    override fun mostrarMenu() {
+        println("Taskmanager Luis Miguel Gomila Dominguez")
+        println("-----------------------------------------")
+        println("1) Crear una nueva actividad")
+        println("2) Listar todas las actividades")
+        println("3) Cambiar estado tarea")
+        println("0) SALIR")
+        println("-----------------------------------------")
+    }
+
+    /**
+     * Función que pide información
+     * @param msj-> Mensaje personalizado
+     * @return Devuelve la información puesta por el usuario
+     */
+    override fun pedirInfo(msj: String): String {
+        println(msj)
+        print(">> ")
+        return readln()
+    }
+
+    /**
+     * Función que creará una actividad
+     * Si la opción es 1, usará el metodo estatico crea intsancia de la clase Tarea
+     * Si la opcion es 2, creara la instancia con el metodo estatico de Evento
+     * A ambos se le pasan la funcion de pedirInformacion con un msj personalizado.
+     *
+     * @param opcion-> Opcion introducida por el usuario
+     * @return la actividad creada o nulo en caso de dar error (se controla afuera)
+     */
+    override fun crearActividad(opcion:Int,repo:RepoActividades):Actividad? {
+        var actividad:Actividad? = null
+        try {
+            when (opcion) {
+                1 -> {
+                    actividad = Tarea.creaInstancia(pedirInfo("La descripción de la tarea"))
+                    repo.tareas.add(actividad)
+                }
+                2 ->{
+                    actividad = Evento.creaInstancia(
+                        pedirInfo("La descripción del evento"),
+                        pedirInfo("La ubicación del evento"),
+                        pedirInfo("La fecha en la que sucederá el evento")
+                    )
+                    repo.eventos.add(actividad)
+                }
+
+            }
+        }catch(e:Exception){
+            println("¡Error! Detalle: $e")
+            actividad = null
+        }
+        return actividad
+    }
+
+    /**
+     * Función pedir opcion
+     * Controla que el numero este dentro del rango, mientras no lo este lo pedira.
+     *
+     * @param msj-> Mensaje personalizado que mostrar
+     * @param min-> Numero minimo del rango de opciones
+     * @param max-> Numero maximo del rango de opciones
+     * @return Devuelve la opcion introducida
+     */
+    override fun pedirOpcion(msj: String, min: Int, max: Int):Int {
+        println(msj)
+        var opcion:Int? = null
+        do{
+            try{
+                print(">>")
+                opcion = readln().toInt()
+                if(opcion <min || opcion >max){
+                    throw IllegalArgumentException("¡Número introducido fuera de rango!")
+                }
+            }catch(e: IllegalArgumentException){
+                println("¡Error! Vuelve a introducir. Detalle: $e")
+                opcion = null
+            }
+        }while(opcion == null)
+        return opcion
+    }
+
+    /**
+     * Funcion listarActividades
+     * Listara las actividades que haya en la lista usando el metodo de obtener detalles
+     *
+     * @param actividades-> Lista mutable de las actividades
+     */
+    override fun listarActividades(actividades: MutableList<Actividad>) {
+        for(actividad in actividades){
+            println(actividad.obtenerDetalle())
+        }
+    }
+}
