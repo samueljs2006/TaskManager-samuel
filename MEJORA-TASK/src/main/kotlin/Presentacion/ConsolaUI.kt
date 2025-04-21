@@ -3,6 +3,7 @@ package Presentacion
 import AccesoDatos.RepoActividades
 import AccesoDatos.RepoUsuarios
 import Dominio.Actividad
+import Dominio.EtiquetasTareas
 import Dominio.Evento
 import Dominio.Tarea
 import Dominio.Usuario
@@ -70,6 +71,21 @@ class ConsolaUI: Consola {
      * @return la actividad creada o nulo en caso de dar error (se controla afuera)
      */
 
+    private fun pedirEtiqueta(): EtiquetasTareas{
+        for(etiqueta in EtiquetasTareas.entries){
+            println(etiqueta)
+        }
+        var etiqueta: EtiquetasTareas? = null
+        do {
+            println("Introduzca una de las etiquetas >> ")
+            etiqueta = EtiquetasTareas.getEtiqueta(readln().trim())
+            if(etiqueta == null){
+                println("ETIQUETA INTRODUCIDA NO VÁLIDA VUELVA A INTENTAR")
+            }
+        }while(etiqueta == null)
+
+        return etiqueta
+    }
     override fun crearActividad(opcion:Int,repo:RepoActividades,repoUser: RepoUsuarios):Actividad? {
         var actividad:Actividad? = null
         try {
@@ -77,7 +93,9 @@ class ConsolaUI: Consola {
                 1 -> {
                     actividad = Tarea.creaInstancia(
                         pedirInfo("La descripción de la tarea"),
-                        pedirUsuario(repoUser).nombre
+                        pedirUsuario(repoUser).nombre,
+                        pedirEtiqueta()
+
                     )
                     repo.tareas.add(actividad)
                 }

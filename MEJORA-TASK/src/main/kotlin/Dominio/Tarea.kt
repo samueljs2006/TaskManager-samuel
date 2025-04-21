@@ -8,7 +8,8 @@ import Dominio.Evento
  */
 class Tarea private constructor(
     descripcion:String,
-    usuario:String
+    usuario:String,
+    val etiqueta: EtiquetasTareas
 ): Actividad(descripcion,usuario) {
     /*El estado se inicializará como tarea abierta*/
     var estado = EstadoTarea.ABIERTA
@@ -16,11 +17,12 @@ class Tarea private constructor(
     private constructor(
         usuario: String,
         id:String,
+        etiqueta: EtiquetasTareas,
         fechaCreacion: String,
         descripcion: String,
         estado:String
 
-    ) : this(usuario,descripcion) {
+    ) : this(usuario,descripcion,etiqueta) {
         this.id = id
         this.fechaCreacion = fechaCreacion
         this.estado = EstadoTarea.getEstado(estado)!!
@@ -32,7 +34,7 @@ class Tarea private constructor(
      * @return String
      */
     override fun obtenerDetalle():String{
-        return super.obtenerDetalle() + ";$estado"
+        return super.obtenerDetalle() + ";$estado;$etiqueta"
     }
 
     companion object{
@@ -44,18 +46,19 @@ class Tarea private constructor(
          * manera
          * @return Devuelve un objeto instanciado de la clase tarea.
          */
-        fun creaInstancia(descripcion:String,usuario:String):Tarea{
-            return Tarea(descripcion,usuario)
+        fun creaInstancia(descripcion:String,usuario:String,etiqueta: EtiquetasTareas):Tarea{
+            return Tarea(descripcion,usuario,etiqueta)
         }
 
         fun creaInstancia(
             usuario: String,
             id:String,
+            etiqueta: EtiquetasTareas,
             fechaCreacion:String,
             descripcion: String,
             estado:String
         ):Tarea{
-            return Tarea(usuario,id,fechaCreacion,descripcion,estado)
+            return Tarea(usuario,id,etiqueta,fechaCreacion,descripcion,estado)
         }
     }
 

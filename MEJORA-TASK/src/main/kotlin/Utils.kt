@@ -33,8 +33,9 @@ object Utils {
                 val descripcion = partes[2]
                 val fechaCreacion = partes[3]
                 val estado = partes[4]
-                return Tarea.creaInstancia(usuario,id,descripcion,fechaCreacion,estado)
-            }
+                val etiqueta = partes[5]
+                return Tarea.creaInstancia(usuario,id, EtiquetasTareas.getEtiqueta(etiqueta)!!,descripcion,fechaCreacion,estado,)
+            } //la etiqueta no será nula nunca en este caso.
 
             6->{
                 val usuario = partes[0]
