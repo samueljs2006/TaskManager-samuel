@@ -20,7 +20,8 @@ class Evento private constructor(
      * Sobreescribe la de Actividad y le añade la fecha y ubicación
      * @return String
      */
-    override var fechaCreacion = fecha
+
+    override var id = "${CalculoId.generarId(fecha)}"
 
     override fun obtenerDetalle(): String {
         return super.obtenerDetalle() + ";Fecha: <$fecha>;Ubicación: <$ubicacion>"

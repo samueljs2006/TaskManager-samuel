@@ -1,34 +1,19 @@
 package Dominio
 
+import Utils
+
 abstract class Actividad(
-    private val descripcion:String,
-    private val usuario:String
+    private val descripcion: String,
+    private val usuario: String
 ) {
-    /*Al inicializar la clase se comprobará que la descripción no está vacía*/
-    init{
-        require(!descripcion.isEmpty()){"¡La descripción no puede estar vacía!"}
+    init {
+        require(descripcion.isNotBlank()) { "¡La descripción no puede estar vacía!" }
     }
 
-    /*Se utiliza la función obtener fecha actual del paquete utils*/
-    open var fechaCreacion = Utils.obtenerFechaActual()
+    private var fechaCreacion: String = Utils.obtenerFechaActual()
+    protected open var id: String = "${CalculoId.generarId(fechaCreacion)}"
 
-    /*Se utiliza metodo estatico de generar ID*/
-    protected var id = CalculoId.generarId(fechaCreacion)
-
-    open fun getIdActividad():Int{
-        return id
-    }
-
-    open fun obtenerUsuario():String{
-        return usuario
-    }
-
-    /**
-     * Función obtener detalle
-     * Es open para poder usarlo fuera de las clases
-     * @return String que contendrá el id y la descripción
-     */
-    open fun obtenerDetalle():String{
-        return "Usuario:<${usuario}>;<$id>;<$descripcion>"
-    }
+    open fun getIdActividad(): String = id
+    open fun obtenerUsuario(): String = usuario
+    open fun obtenerDetalle(): String = "Usuario:<$usuario>; ID:<$id>; Descripción:<$descripcion>; Fecha:<$fechaCreacion>"
 }

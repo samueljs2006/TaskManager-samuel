@@ -81,6 +81,7 @@ class ConsolaUI: Consola {
                     )
                     repo.tareas.add(actividad)
                 }
+
                 2 ->{
                     actividad = Evento.creaInstancia(
                         pedirInfo("La descripción del evento"),
