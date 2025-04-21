@@ -24,20 +24,24 @@ object Utils {
         return Usuario.creaInstancia(nombreUsuario)
     }
 
+    fun esEtiqueta(etiqueta:String):Boolean{
+        return EtiquetasTareas.getEtiqueta(etiqueta) != null
+    }
+
     fun deserializarActividad(serializado: String): Actividad?{
         val partes = serializado.split(";")
-        when(partes.size){
-            5->{
+        when(esEtiqueta(partes.last())){
+            true->{
                 val usuario = partes[0]
                 val id = partes[1]
                 val descripcion = partes[2]
                 val fechaCreacion = partes[3]
                 val estado = partes[4]
                 val etiqueta = partes[5]
-                return Tarea.creaInstancia(usuario,id, EtiquetasTareas.getEtiqueta(etiqueta)!!,descripcion,fechaCreacion,estado,)
+                return Tarea.creaInstancia(usuario,id, EtiquetasTareas.getEtiqueta(etiqueta)!!,fechaCreacion,descripcion,estado,)
             } //la etiqueta no será nula nunca en este caso.
 
-            6->{
+            false->{
                 val usuario = partes[0]
                 val id = partes[1]
                 val descripcion = partes[2]

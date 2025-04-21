@@ -21,6 +21,7 @@ class ConsolaUI: Consola {
         println("1) Crear una nueva actividad")
         println("2) Listar todas las actividades")
         println("3) Cambiar estado tarea")
+        println("4) Filtrar actividades")
         println("0) SALIR")
         println("-----------------------------------------")
     }
@@ -85,6 +86,18 @@ class ConsolaUI: Consola {
         }while(etiqueta == null)
 
         return etiqueta
+    }
+
+    fun listarTareas(tareas: MutableList<Tarea>){
+        for(tarea in tareas){
+            println(tarea.obtenerDetalle())
+        }
+    }
+
+    fun listarEventos(eventos: MutableList<Evento>){
+        for(evento in eventos){
+            println(evento.obtenerDetalle())
+        }
     }
     override fun crearActividad(opcion:Int,repo:RepoActividades,repoUser: RepoUsuarios):Actividad? {
         var actividad:Actividad? = null

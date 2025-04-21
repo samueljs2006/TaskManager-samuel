@@ -3,7 +3,7 @@ package Dominio
 import AccesoDatos.RepoActividades
 
 class Usuario private constructor(
-    val nombre: String
+    val nombre: String = "Anónimo"
 ){
     val repoActividades = RepoActividades()
 

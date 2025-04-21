@@ -1,8 +1,11 @@
 package AccesoDatos
 
 import Dominio.Actividad
+import Dominio.EstadoTarea
 import Dominio.Evento
 import Dominio.Tarea
+import Servicios.ControlDeHistorial
+import java.io.File
 
 class RepoActividades(
     override val actividades: MutableList<Actividad> = mutableListOf(),
@@ -12,6 +15,22 @@ class RepoActividades(
 
     init {
         cargarActividades()
+    }
+
+
+    fun cambiarEstado(tarea:Tarea,historial: ControlDeHistorial,estadoTarea: EstadoTarea){
+        val id = tarea.getIdActividad()
+        tarea.estado = estadoTarea
+        var texto = ""
+
+        for(ta in this.tareas){
+            texto += ta.obtenerDetalle() +"\n"
+        }
+
+        File(RUTA_FICHERO_ACTIVIDADES).writeText(texto)
+
+        println("¡Tarea cerrada con éxito!")
+        historial.agregarHistorial("Tarea con id $id con estado cambiado a $estadoTarea con éxito")
     }
 
     fun aniadirActividad(actividad: Actividad) {

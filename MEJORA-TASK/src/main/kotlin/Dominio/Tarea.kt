@@ -13,7 +13,6 @@ class Tarea private constructor(
 ): Actividad(descripcion,usuario) {
     /*El estado se inicializará como tarea abierta*/
     var estado = EstadoTarea.ABIERTA
-
     private constructor(
         usuario: String,
         id:String,

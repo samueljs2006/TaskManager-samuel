@@ -10,10 +10,10 @@ class Evento private constructor(
     descripcion: String,
     usuario:String,
     private val ubicacion: String,
-    private val fecha: String
+    private val fechaEvento: String
 ):Actividad(descripcion,usuario) {
     init{
-        require(Utils.esFechaValida(fecha)){"La fecha tiene que tener un formato válida (dd-MM-yyyy)"}
+        require(Utils.esFechaValida(fechaEvento)){"La fecha tiene que tener un formato válida (dd-MM-yyyy)"}
     }
 
     private constructor(
@@ -21,12 +21,13 @@ class Evento private constructor(
         descripcion: String,
         usuario: String,
         ubicacion: String,
-        fecha: String,
+        fechaEvento: String,
         fechaCreacion: String
-    ) : this(descripcion, usuario, ubicacion, fecha) {
+    ) : this(descripcion, usuario, ubicacion, fechaEvento) {
         this.id = id
         this.fechaCreacion = fechaCreacion
     }
+    override var fecha = fechaEvento
 
     /**
      * Función obtener detalle
@@ -34,10 +35,10 @@ class Evento private constructor(
      * @return String
      */
 
-    override var id = "${CalculoId.generarId(fecha)}"
+    override var id = "${CalculoId.generarId(fechaEvento)}"
 
     override fun obtenerDetalle(): String {
-        return super.obtenerDetalle() + ";$fecha;$ubicacion"
+        return super.obtenerDetalle() + ";$fechaEvento;$ubicacion"
     }
 
     init{

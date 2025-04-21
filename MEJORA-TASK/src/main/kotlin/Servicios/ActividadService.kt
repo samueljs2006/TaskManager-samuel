@@ -3,6 +3,9 @@ package Servicios
 import AccesoDatos.*
 import Dominio.*
 import Presentacion.*
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class ActividadService {
     private val consola = ConsolaUI()
@@ -13,7 +16,8 @@ class ActividadService {
     fun gestionarPrograma() {
         usuariosConActividades()
         do {
-            val opcion = consola.pedirOpcion("Elige una opción:\n1) Añadir actividad\n2) Listar actividades\n3) Cambiar estado de tarea\n0) Salir", 0, 3)
+            consola.mostrarMenu()
+            val opcion = consola.pedirOpcion("Elige una opción", 0, 4)
             gestionarOpcion(opcion)
         } while (opcion != 0)
     }
@@ -40,12 +44,11 @@ class ActividadService {
             val estado = EstadoTarea.getEstado(estadoNuevo)
             if (estado != null) {
                 tarea.estado = estado
-                if (estado == EstadoTarea.FINALIZADA) {
-                    repo.actividades.remove(tarea)
-                    repo.tareas.remove(tarea)
-                    println("¡Tarea cerrada con éxito!")
-                    historial.agregarHistorial("Tarea con id $id cerrada con éxito")
+
+                if (estado in EstadoTarea.entries) {
+                    repo.cambiarEstado(tarea,historial,estado)
                 }
+
                 estadoValido = true
             } else {
                 println("¡Error! Estado no válido, vuelve a intentarlo.")
@@ -54,11 +57,197 @@ class ActividadService {
         } while (!estadoValido)
     }
 
+    private fun filtradoPorTipo(){
+        var opcion = -1
+
+        do{
+            try{
+                println("1) Mostrar tareas")
+                println("2) Mostrar eventos")
+                println("0) SALIR")
+                opcion = consola.pedirOpcion("Introduce opción",0,2)
+                when(opcion){
+                    1-> consola.listarTareas(repo.tareas)
+                    2-> consola.listarEventos(repo.eventos)
+                    else-> Exception("El valor introducido se sale del rango")
+                }
+            }catch(e: Exception){
+                println("¡Error! Detalle: $e")
+            }
+        }while(opcion != 0)
+    }
+
+    private fun filtrarPorEstado(){
+        var opcion = -1
+
+        do{
+            try{
+                println("1) MOSTRAR ABIERTAS")
+                println("2) MOSTRAR EN PROGRESO")
+                println("3) MOSTRAR FINALIZADAS")
+                println("0) SALIR")
+                opcion = consola.pedirOpcion("Introduce opción",0,3)
+
+                var filtrado: EstadoTarea? = null
+
+                when(opcion){
+                    1-> filtrado = EstadoTarea.ABIERTA
+                    2-> filtrado = EstadoTarea.EN_PROGRESO
+                    3-> filtrado = EstadoTarea.FINALIZADA
+                    else-> Exception("El valor introducido se sale del rango")
+                }
+
+                for(tarea in repo.tareas){
+                    if(tarea.estado == filtrado){
+                        println(tarea.obtenerDetalle())
+                    }
+                }
+
+            }catch(e: Exception){
+                println("¡Error! Detalle: $e")
+            }
+        }while(opcion != 0)
+    }
+
+    private fun filtradoPorUsuarios(){
+        var seguir = true
+        do{
+            var encontrado = false
+            try{
+                println("Introduzca el nombre del usuario")
+                val nombre = readln().trim()
+
+                for(usuario in servicioUsuario.usuariosRepo.usuarios){
+                    if(usuario.nombre == nombre){
+                        encontrado = true
+                        for(actividad in usuario.repoActividades.actividades){
+                            println(actividad.obtenerDetalle())
+                        }
+                    }
+                }
+
+                if(!encontrado){
+                    println("El usuario introducido no ha sido encontrado")
+                    seguir = consola.preguntarSeguir()
+                }
+
+                else{
+                    seguir = consola.preguntarSeguir()
+                }
+            }catch(e: Exception){
+                println("¡Error! Detalle: $e")
+            }
+        }while(seguir)
+    }
+    private fun filtradoPorEtiquetas(){
+        var opcion = -1
+
+        do{
+            try{
+                println("1) Mostrar tareas URGENTES")
+                println("2) Mostrar tareas SENCILLAS")
+                println("3) Mostrar tareas de DOCUMENTACIÓN")
+                println("4) Mostrar tareas de REVISIÓN")
+                println("0) SALIR")
+                opcion = consola.pedirOpcion("Introduce opción",0,4)
+
+                var filtrado: EtiquetasTareas? = null
+                when(opcion){
+                    1-> filtrado = EtiquetasTareas.URGENTE
+                    2-> filtrado = EtiquetasTareas.SENCILLA
+                    3-> filtrado = EtiquetasTareas.DOCUMENTACION
+                    4-> filtrado = EtiquetasTareas.REVISION
+                    else-> Exception("El valor introducido se sale del rango")
+                }
+                for(tarea in repo.tareas){
+                    if(tarea.etiqueta == filtrado){
+                        println(tarea.obtenerDetalle())
+                    }
+                }
+            }catch(e: Exception){
+                println("¡Error! Detalle: $e")
+            }
+        }while(opcion != 0)
+    }
+
+    private fun filtradoPorFechas() {
+        var opcion: Int
+        do {
+            println("Selecciona una opción para filtrar actividades:")
+            println("1) Enseñar actividades para hoy")
+            println("2) Enseñar actividades para mañana")
+            println("3) Enseñar actividades de esta semana")
+            println("4) Enseñar actividades de este mes")
+            println("0) SALIR")
+
+            opcion = consola.pedirOpcion("Elige una opción", 0, 4)
+
+            when (opcion) {
+                1 -> filtrarActividades { it.fecha== Utils.obtenerFechaActual() }
+                2 -> filtrarActividades { it.fecha == LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) }
+                3 -> filtrarActividades { fechaDentroDeSemana(it.fecha) }
+                4 -> filtrarActividades { fechaDentroDeMes(it.fecha) }
+                0 -> println("Saliendo del filtrado por fechas...")
+                else -> println("Opción no válida, intenta de nuevo.")
+            }
+        } while (opcion != 0)
+    }
+
+    private fun filtrarActividades(condicion: (Actividad) -> Boolean) {
+        val actividadesFiltradas = repo.actividades.filter(condicion)
+        if (actividadesFiltradas.isEmpty()) {
+            println("No hay actividades que coincidan con el filtro.")
+        } else {
+            println("Actividades encontradas:")
+            actividadesFiltradas.forEach { println(it.obtenerDetalle()) }
+        }
+    }
+
+    private fun fechaDentroDeSemana(fecha: String): Boolean {
+        val hoy = LocalDate.now()
+        val inicioSemana = hoy.with(DayOfWeek.MONDAY)
+        val finSemana = hoy.with(DayOfWeek.SUNDAY)
+        val fechaActividad = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        return !fechaActividad.isBefore(inicioSemana) && !fechaActividad.isAfter(finSemana)
+    }
+
+    private fun fechaDentroDeMes(fecha: String): Boolean {
+        val hoy = LocalDate.now()
+        val fechaActividad = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        return fechaActividad.month == hoy.month && fechaActividad.year == hoy.year
+    }
+    private fun filtrar(){
+        var opcion = -1
+        do {
+            try {
+                println("SELECCIONE UN MODO DE FILTRADO")
+                println("1.- Por tipo (Tarea/Evento)")
+                println("2.- Por estado")
+                println("3.- Por etiquetas")
+                println("4.- Por usuarios")
+                println("5.- Por fechas")
+                println("0) SALIR")
+                opcion = consola.pedirOpcion(">> ",0,5)
+
+                when(opcion){
+                    1-> filtradoPorTipo()
+                    2-> filtrarPorEstado()
+                    3-> filtradoPorEtiquetas()
+                    4-> filtradoPorUsuarios()
+                    5-> filtradoPorFechas()
+                }
+            }catch(e: Exception){
+                println("¡Error! Vuelve a introducir Detalle: $e")
+            }
+        }while(opcion != 0)
+    }
+
     private fun gestionarOpcion(opcion: Int) {
         when (opcion) {
             1 -> anadirActividad()
             2 -> listarActividades()
             3 -> cambiarEstado(pedirIdTarea())
+            4 -> filtrar()
         }
     }
 

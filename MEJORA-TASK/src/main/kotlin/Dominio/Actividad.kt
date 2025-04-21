@@ -10,7 +10,9 @@ abstract class Actividad(
         require(descripcion.isNotBlank()) { "¡La descripción no puede estar vacía!" }
     }
 
+
     protected open var fechaCreacion: String = Utils.obtenerFechaActual()
+    open var fecha = fechaCreacion
     protected open var id: String = "${CalculoId.generarId(fechaCreacion)}"
 
     open fun getIdActividad(): String = id

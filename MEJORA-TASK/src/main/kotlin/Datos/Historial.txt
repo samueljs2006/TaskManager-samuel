@@ -1,0 +1,23 @@
+Se listan todas las actividades 2025-04-21T17:15:54.118761700
+Actividad agregada con éxito 2025-04-21T17:16:01.605636500
+Se listan todas las actividades 2025-04-21T17:16:03.211959300
+Actividad agregada con éxito 2025-04-21T17:19:35.532823
+Se listan todas las actividades 2025-04-21T17:19:42.598730200
+Se listan todas las actividades 2025-04-21T17:25:51.640313200
+Actividad agregada con éxito 2025-04-21T17:25:58.152736900
+Se listan todas las actividades 2025-04-21T17:26:05.343078500
+Actividad agregada con éxito 2025-04-21T17:27:14.244553100
+Se listan todas las actividades 2025-04-21T17:27:19.681059600
+Tarea con id 1 cerrada con éxito 2025-04-21T17:28:23.653247500
+Se listan todas las actividades 2025-04-21T17:28:24.793383800
+Se listan todas las actividades 2025-04-21T17:28:37.525318700
+Actividad agregada con éxito 2025-04-21T17:46:51.830692700
+Tarea con id 1 cerrada con éxito 2025-04-21T17:46:57.823779200
+Se listan todas las actividades 2025-04-21T17:46:59.301872400
+Actividad agregada con éxito 2025-04-21T17:55:34.914059400
+Tarea con id 1 cerrada con éxito 2025-04-21T17:55:40.561818400
+Se listan todas las actividades 2025-04-21T17:55:42.712742400
+Actividad agregada con éxito 2025-04-21T18:07:19.221390800
+Actividad agregada con éxito 2025-04-21T18:07:28.563222100
+Se listan todas las actividades 2025-04-21T18:52:09.177751700
+Se listan todas las actividades 2025-04-21T18:52:14.238996400
