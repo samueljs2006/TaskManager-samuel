@@ -24,21 +24,42 @@ object Utils {
         return Usuario.creaInstancia(nombreUsuario)
     }
 
-    fun deserializarActividad(serializado: String): Actividad? {
+    fun deserializarActividad(serializado: String): Actividad?{
         val partes = serializado.split(";")
-        return when (partes.size) {
-            3 -> Tarea.creaInstancia(partes[0], partes[1]).apply {
-                estado = EstadoTarea.getEstado(partes[2])!!
+        when(partes.size){
+            5->{
+                val usuario = partes[0]
+                val id = partes[1]
+                val descripcion = partes[2]
+                val fechaCreacion = partes[3]
+                val estado = partes[4]
+                return Tarea.creaInstancia(usuario,id,descripcion,fechaCreacion,estado)
             }
-            4 -> Evento.creaInstancia(partes[0], partes[1], partes[2], partes[3])
-            else -> null
+
+            6->{
+                val usuario = partes[0]
+                val id = partes[1]
+                val descripcion = partes[2]
+                val fechaCreacion = partes[3]
+                val fecha = partes[4]
+                val ubicacion = partes[5]
+                return Evento.creaInstancia(usuario,id,descripcion,fechaCreacion,fecha,ubicacion)
+            }
         }
+        return null
+
     }
 
     fun leerArchivo(ruta: String): List<String> {
         return try {
             val archivo = File(ruta)
-            if (archivo.exists()) archivo.readLines() else emptyList()
+            if (archivo.exists()) {
+                val lineas = archivo.readLines()
+                lineas
+            } else {
+                println("El archivo no existe: $ruta")
+                emptyList()
+            }
         } catch (e: Exception) {
             println("Error al leer el archivo: ${e.message}")
             emptyList()
@@ -48,7 +69,13 @@ object Utils {
     fun aniadirActividad(ruta: String, actividad: Actividad) {
         try {
             val archivo = File(ruta)
-            archivo.appendText("${actividad.obtenerDetalle()}\n")
+            val detalle = actividad.obtenerDetalle()
+            if (detalle.isNotBlank()) {
+                archivo.appendText("$detalle\n")
+                println("Actividad añadida al archivo: $detalle")
+            } else {
+                println("Error: La actividad no tiene detalles válidos para guardar.")
+            }
         } catch (e: Exception) {
             println("Error al añadir actividad: ${e.message}")
         }
@@ -58,6 +85,7 @@ object Utils {
         try {
             val archivo = File(ruta)
             archivo.appendText("${usuario.nombre}\n")
+            println("Usuario añadido al archivo: ${usuario.nombre}")
         } catch (e: Exception) {
             println("Error al añadir usuario: ${e.message}")
         }

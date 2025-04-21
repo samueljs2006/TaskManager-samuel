@@ -15,6 +15,19 @@ class Evento private constructor(
     init{
         require(Utils.esFechaValida(fecha)){"La fecha tiene que tener un formato válida (dd-MM-yyyy)"}
     }
+
+    private constructor(
+        id: String,
+        descripcion: String,
+        usuario: String,
+        ubicacion: String,
+        fecha: String,
+        fechaCreacion: String
+    ) : this(descripcion, usuario, ubicacion, fecha) {
+        this.id = id
+        this.fechaCreacion = fechaCreacion
+    }
+
     /**
      * Función obtener detalle
      * Sobreescribe la de Actividad y le añade la fecha y ubicación
@@ -24,7 +37,7 @@ class Evento private constructor(
     override var id = "${CalculoId.generarId(fecha)}"
 
     override fun obtenerDetalle(): String {
-        return super.obtenerDetalle() + ";Fecha: <$fecha>;Ubicación: <$ubicacion>"
+        return super.obtenerDetalle() + ";$fecha;$ubicacion"
     }
 
     init{
@@ -42,6 +55,18 @@ class Evento private constructor(
          */
         fun creaInstancia(descripcion:String,usuario:String,ubicacion:String,fecha:String):Evento{
             return Evento(descripcion,usuario,ubicacion,fecha)
+        }
+
+        fun creaInstancia(
+            usuario:String,
+            id:String,
+            descripcion:String,
+            fechaCreacion:String,
+            fecha:String,
+            ubicacion:String
+        ):Evento
+        {
+            return Evento(usuario,id,descripcion,fechaCreacion,fecha,ubicacion)
         }
     }
 }
