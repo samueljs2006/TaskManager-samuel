@@ -31,7 +31,31 @@ Me fijé entonces en que el error residía en que empezaba la ruta en src/ pero 
 
 ![SOLUCIÓN1](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR1/MUESTRA_SOLUCION1.png)
 
+## Error 3 : Identificadores únicos reales
 
+- Este error lo soluciona: Samuel
+
+Al seguir los pasos del ejercicio, nos dimos cuenta de que era imposible poder seleccionar una tarea por el id para poder agregarle a esta una subtarea ya que al crearse los id's con fechas y al las tareas crearse siempre con la fecha actual, siempre iban a tener el mismo id. Planteamos dos cosas sobre la mesa, la primera era hacer que solo se pudiera crear una tarea al día y añadirle a esta todo como subtareas, y la otra, fue la que hemos acabado ejecutando y la que tiene lógica, que es hacer que los id's se generen distintos para la clase tarea y la clase eventos, es decir, serán unicos para ambos, pero en el caso de las tareas, se aumenta siempre en 1 el id en vez de asociarselo a la fecha, ya que estas si las tenemos que seleccionar.
+
+Nos pusimos manos a la obra y pusimos los puntos de ruptura y depuramos, al no ser error de ejecución, el logger aquí realmente no hizo mucho.
+
+![PUNTOS DE RUPTURA](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR3/ERROR3.png)
+
+![VARIABLES DEPURACIÓN](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR3/VARIABLES.png)
+
+Como vemos, la cosa es que se le asigna la id siguiendo el mismo tratamiento que en los eventos, es decir, con la fecha. Para esto, simplemente vamos a hacer una variable contador que le vaya incrementando a las tareas su id y así lo podemos seleccionar por su id.
+
+![CAPTURA SOLUCION 1](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR3/SOLUCION.png)
+
+Creamos una variable contador en companion
+
+![CAPTURA SOLUCION 2](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR3/SOLUCION_2.png)
+
+A las id se le sumará ese contador
+
+![CAPTURA SOLUCION 3](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR3/SOLUCION_3.png)
+
+Vemos que ahora se le asigna perfectamente y además el log nos dice que se ha creado la subtarea en la tarea con id 11 con éxito
 
 ## Conclusiones y Aprendizajes
 1. **Importancia de la Validación**:
