@@ -31,6 +31,22 @@ Me fijé entonces en que el error residía en que empezaba la ruta en src/ pero 
 
 ![SOLUCIÓN1](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR1/MUESTRA_SOLUCION1.png)
 
+## Error 2 : Problema al crear subtareas
+
+- Este error lo soluciona: Pablo
+
+Al hacer el programa, el ejercicio pedía que una de las mejoras fuera crear una lista de tareas de una sola capa de profundidad, pero con lo de la capa de profundidad había entendido que solo se pudiera crear una tarea y claro, me estaba dando muchos problemas eso, porque no le podía asignar varias subtareas a una tarea. Como queríamos solucionar el error con las herramientas de depuración, cree un punto de ruptura que empezara desde la clase tarea y llevará hasta esa variable donde se almacenaba la tarea anteriormente. Vimos que el problema estaba en que teniamos una variable que era subTarea = Tarea? cuando tendría que ser una variable llamada subtareas que fuera una lista de tareas, lo cambiamos.
+
+![CAMBIO VARIABLE](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR2/MUESTRA_ERROR2.png)
+
+Al cambiarlo, ahora teníamos un problema, y es que no podíamos ejecutar ya que teníamos que cambiar muchas cosas en el programa que usaba la variable subTarea en lugar de esa lista que le estabamos dando
+
+![NuevosErrores](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR2/ERROR_SUBTAREA.png)
+
+Para ello, tuvimos que cambiar bastantes métodos para que cada vez que cogieran una tarea, a esta tarea se le cogiera esa lista y se le hiciera un for mostrando los detalles de cada una de sus subtareas.
+
+![SolucionError](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR2/SOLUCION_ERROR.png)
+
 ## Error 3 : Identificadores únicos reales
 
 - Este error lo soluciona: Samuel
