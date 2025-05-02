@@ -188,27 +188,26 @@ class ConsolaUI: Consola {
 
 
     override fun listarActividades(actividades: MutableList<Actividad>) {
-        for (actividad in actividades) {
-            when (actividad) {
-                is Tarea -> {
-                    println("ID: ${actividad.getIdActividad()}, Usuario: ${actividad.obtenerUsuario()}, Descripción: ${actividad.obtenerDesc()}")
+        val mostradas = mutableSetOf<String>() // Para evitar duplicados en la salida
 
-                    // Comprobar si tiene una subtarea
-                    if (actividad.subTareas == null) {
-                        println("  -> No hay subtarea asociada.")
-                    } else {
-                        // Mostrar los detalles de la subtarea
-                        val subTareas = actividad.subTareas!!
-                        for(subTarea in subTareas){
-                            println("  -> Subtarea:")
-                            println("      - Descripción: ${subTarea.obtenerDesc()}")
-                            println("      - Usuario: ${subTarea.obtenerUsuario()}")
-                            println("      - Etiqueta: ${subTarea.etiqueta}")
+        for (actividad in actividades) {
+            val detalle = actividad.obtenerDetalle()
+            if (detalle !in mostradas) {
+                println(detalle)
+                mostradas.add(detalle) // Registrar como mostrada
+
+                when (actividad) {
+                    is Tarea -> {
+                        if (actividad.subTareas.isNotEmpty()) {
+                            println("Subtareas:")
+                            actividad.subTareas.forEach { subtarea ->
+                                println("    - ${subtarea.obtenerDetalle()}")
+                            }
+                        } else {
+                            println("Subtareas:\n    Sin subtareas")
                         }
                     }
-                }
-                is Evento-> {
-                    println(actividad.obtenerDetalle())
+                    is Evento -> println("Sin subtareas (Evento).")
                 }
             }
         }

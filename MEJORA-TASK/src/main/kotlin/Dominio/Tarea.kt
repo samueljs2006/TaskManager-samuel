@@ -44,11 +44,15 @@ class Tarea private constructor(
     }
 
     fun agregarSubTarea(subTarea: Tarea) {
-        // Validar que las subtareas no puedan tener más subtareas
-        if (subTarea.subTareas.isNotEmpty()) {
-            throw IllegalArgumentException("Una subtarea no puede tener más subtareas.")
+        if (!subTareas.contains(subTarea)) { // Evitar duplicados en la lista de subtareas
+            // Validar que las subtareas no puedan tener más subtareas
+            if (subTarea.subTareas.isNotEmpty()) {
+                throw IllegalArgumentException("Una subtarea no puede tener más subtareas.")
+            }
+            subTareas.add(subTarea)
+        } else {
+            println("La subtarea ya existe, no se añadirá de nuevo.")
         }
-        subTareas.add(subTarea)
     }
 
     companion object {

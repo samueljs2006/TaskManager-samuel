@@ -35,28 +35,34 @@ class ActividadService {
 
     private fun agregarSubtarea() {
         try {
+            // Listar las tareas disponibles para elegir la tarea madre
             consola.listarTareas(repo.tareas)
 
+            // Pedir al usuario que seleccione la tarea madre por ID
             val idTareaMadre = consola.pedirInfo("Introduce el ID de la tarea madre a la que deseas agregar una subtarea:").toIntOrNull()
             val tareaMadre = repo.tareas.find { it.getIdActividad().toInt() == idTareaMadre }
 
             if (tareaMadre != null) {
+                // Crear la subtarea
                 val subtarea = Tarea.creaInstancia(
                     consola.pedirInfo("Descripción de la subtarea:"),
                     consola.pedirInfo("Usuario asignado:"),
                     consola.pedirEtiqueta()
                 )
 
+                // Asignar la subtarea a la tarea madre
                 tareaMadre.agregarSubTarea(subtarea)
-                repo.tareas.add(subtarea)
 
-                logger.trace("Subtarea añadida con éxito a la tarea madre ${tareaMadre.getIdActividad()}")
+                // Actualizar el fichero para incluir la tarea madre con sus subtareas
+                Utils.actualizarTareaEnFichero(tareaMadre)
+
+                println("¡Subtarea añadida con éxito!")
                 historial.agregarHistorial("Subtarea agregada a la tarea ${tareaMadre.getIdActividad()}")
             } else {
-                logger.warn("No se encontró la tarea madre con el ID proporcionado: $idTareaMadre")
+                println("Error: No se encontró la tarea madre con el ID proporcionado.")
             }
         } catch (e: Exception) {
-            logger.error("Error al agregar una subtarea: ${e.message}", e)
+            println("¡Error! Detalle: ${e.message}")
         }
     }
 
@@ -341,7 +347,8 @@ class ActividadService {
     }
 
     private fun listarActividades() {
-        consola.listarActividades(repo.actividades)
+        val actividadesUnicas = repo.actividades.distinct() // Eliminar duplicados
+        consola.listarActividades(actividadesUnicas.toMutableList())
         historial.agregarHistorial("Se listan todas las actividades")
     }
 

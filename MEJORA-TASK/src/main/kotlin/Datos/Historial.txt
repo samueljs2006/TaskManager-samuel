@@ -86,3 +86,24 @@ Se listan todas las actividades 2025-04-21T22:48:48.569385700
 2025-05-02T13:26:53.519829500 -> Se listan todas las actividades
 2025-05-02T13:27:13.608119800 -> Se listan todas las actividades
 2025-05-02T13:28:44.355942300 -> Subtarea agregada a la tarea 11
+2025-05-02T13:48:23.528347200 -> Subtarea agregada a la tarea 11
+2025-05-02T13:48:53.789616800 -> Actividad agregada con éxito
+2025-05-02T13:49:08.008189500 -> Subtarea agregada a la tarea 2
+2025-05-02T13:49:43.632572400 -> Actividad agregada con éxito
+2025-05-02T13:49:57.840073100 -> Subtarea agregada a la tarea 2
+2025-05-02T13:50:03.307172800 -> Se listan todas las actividades
+2025-05-02T13:51:26.625757700 -> Actividad agregada con éxito
+2025-05-02T13:51:37.352737 -> Subtarea agregada a la tarea 2
+2025-05-02T13:51:39.171796400 -> Se listan todas las actividades
+2025-05-02T13:51:58.956906600 -> Se listan todas las actividades
+2025-05-02T13:54:13.248910800 -> Actividad agregada con éxito
+2025-05-02T13:54:27.328259500 -> Subtarea agregada a la tarea 2
+2025-05-02T13:57:53.228745900 -> Se listan todas las actividades
+2025-05-02T13:58:09.335948600 -> Subtarea agregada a la tarea 21
+2025-05-02T13:58:46.155499700 -> Actividad agregada con éxito
+2025-05-02T13:58:56.968630100 -> Subtarea agregada a la tarea 2
+2025-05-02T14:00:30.378256800 -> Actividad agregada con éxito
+2025-05-02T14:00:45.609206800 -> Subtarea agregada a la tarea 2
+2025-05-02T14:03:21.790581500 -> Actividad agregada con éxito
+2025-05-02T14:03:23.286068300 -> Se listan todas las actividades
+2025-05-02T14:03:39.266073400 -> Subtarea agregada a la tarea 2

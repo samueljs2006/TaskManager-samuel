@@ -17,31 +17,40 @@ class RepoActividades(
         cargarActividades()
     }
 
-    fun cambiarEstado(tarea:Tarea,historial: ControlDeHistorial,estadoTarea: EstadoTarea){
+
+    fun cambiarEstado(tarea: Tarea, historial: ControlDeHistorial, estadoTarea: EstadoTarea) {
         val id = tarea.getIdActividad()
         tarea.estado = estadoTarea
-        var texto = ""
+        val archivo = File(RUTA_FICHERO_ACTIVIDADES)
 
-        for(ta in this.tareas){
-            texto += ta.obtenerDetalle() +"\n"
+        archivo.writeText("") // Limpiar el archivo antes de escribir
+
+        tareas.forEach { tareaPrincipal ->
+            archivo.appendText("${tareaPrincipal.obtenerDetalle()}\n")
+
+            if (tareaPrincipal is Tarea && tareaPrincipal.subTareas.isNotEmpty()) {
+                tareaPrincipal.subTareas.forEach { subTarea ->
+                    archivo.appendText("    - ${subTarea.obtenerDetalle()}\n")
+                }
+            }
         }
-
-        File(RUTA_FICHERO_ACTIVIDADES).writeText(texto)
 
         println("¡Tarea cerrada con éxito!")
         historial.agregarHistorial("Tarea con id $id con estado cambiado a $estadoTarea con éxito")
     }
 
     fun aniadirActividad(actividad: Actividad) {
-        if (!actividades.contains(actividad)) { // Evitar duplicados
+        if (!actividades.contains(actividad)) { // Evitar duplicados en la lista de actividades
             actividades.add(actividad)
 
             when (actividad) {
-                is Tarea -> tareas.add(actividad)
-                is Evento -> eventos.add(actividad)
+                is Tarea -> if (!tareas.contains(actividad)) tareas.add(actividad)
+                is Evento -> if (!eventos.contains(actividad)) eventos.add(actividad)
             }
 
             Utils.aniadirActividad(RUTA_FICHERO_ACTIVIDADES, actividad)
+        } else {
+            println("La actividad ya existe, no se añadirá de nuevo.")
         }
     }
 
