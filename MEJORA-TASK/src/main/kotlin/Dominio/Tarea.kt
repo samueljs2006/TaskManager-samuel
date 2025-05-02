@@ -5,6 +5,10 @@ class Tarea private constructor(
     usuario: String,
     val etiqueta: EtiquetasTareas
 ) : Actividad(descripcion, usuario) {
+
+    init{
+        contador += 1
+    }
     var estado = EstadoTarea.ABIERTA
 
     // Lista de subtareas asociadas
@@ -18,7 +22,7 @@ class Tarea private constructor(
         descripcion: String,
         estado: String
     ) : this(usuario, descripcion, etiqueta) {
-        this.id = id
+        this.id = id + contador
         this.fechaCreacion = fechaCreacion
         this.estado = EstadoTarea.getEstado(estado)!!
     }
@@ -48,6 +52,8 @@ class Tarea private constructor(
     }
 
     companion object {
+        var contador = 0
+
         fun creaInstancia(descripcion: String, usuario: String, etiqueta: EtiquetasTareas): Tarea {
             return Tarea(descripcion, usuario, etiqueta)
         }
