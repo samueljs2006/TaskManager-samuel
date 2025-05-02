@@ -73,6 +73,25 @@ A las id se le sumará ese contador
 
 Vemos que ahora se le asigna perfectamente y además el log nos dice que se ha creado la subtarea en la tarea con id 11 con éxito
 
+## Error 4: Subtareas en fichero de texto
+
+- Este error lo soluciona: Angel
+
+Este fue el problema que nos percatamos de primeras, y es que teníamos en mente empezar con este error pero nos surgieron algunos otros por el camino. La cosa es que nos fijamos que en el fichero de texto no se nos almacenaban las subtareas de las tareas, lo que hacia que la creación de subtareas solo se pudiera manejar en memoria y no con los ficheros de texto, que es como decidimos que funcionará nuestro programa por darle un poco más el toque de realismo de cerrar y tener los mismos datos.
+
+Para empezar, volvimos a poner nuestros famosos puntos de ruptura para depurar
+
+![PUNTO DE RUPTURA](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR4/PUNTOS_RUPTURA.png)
+
+En cuanto lo pusimos, detectamos el problema enseguida ya que al final, pusimos el punto de ruptura en el método que sabíamos que iba a ser el que daba problemas. Como vemos, en las variables no se está utilizando correctamente la deserialización de tareas, de hecho, la variable de subtareas sale gris en el ide porque no se usa, es decir, que no estabamos almacenandolas porque se nos pasó de largo (también mas que nada porque esta era una tarea más costosa y decidimos dejarla para finales pero se nos pasó por completo y por eso sabíamos que este iba a ser un error que solucionar en este ejercicio nuevo)
+
+![ERROR LOCALIZADO](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR4/ERROR_DETECTADO.png)
+
+
+Al final, para este error, lo único que había que hacer era añadirle más cosas al código, era el más fácil de detectar, pero a la vez, el más dificil de solucionar porque había que trastear un poco más
+
+![MUESTRA DE SUBTAREAS EN FICHERO](https://github.com/Luismi0202/TaskManager-LGOMDOM/blob/main/IMAGENES/ERROR4/ARREGLO.png)
+
 ## Conclusiones y Aprendizajes
 1. **Importancia de la Validación**:
    - La falta de validaciones adecuadas permitió la aparición de un comportamiento no esperado. Implementar restricciones en los puntos críticos del código es esencial.
