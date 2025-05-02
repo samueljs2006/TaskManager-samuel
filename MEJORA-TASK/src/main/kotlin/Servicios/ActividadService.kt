@@ -3,6 +3,7 @@ package Servicios
 import AccesoDatos.*
 import Dominio.*
 import Presentacion.*
+import com.sun.org.slf4j.internal.LoggerFactory
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -14,64 +15,66 @@ class ActividadService {
     private val repo = RepoActividades()
     private val servicioUsuario = UsuariosService(consola)
     private val historial = ControlDeHistorial()
+    private val logger = LoggerFactory.getLogger(ActividadService::class.java)
 
     fun gestionarPrograma() {
-        usuariosConActividades()
-        do {
-            consola.mostrarMenu()
-            val opcion = consola.pedirOpcion("Elige una opción", 0, 6)
-            gestionarOpcion(opcion)
-        } while (opcion != 0)
+        try {
+            usuariosConActividades()
+            do {
+                consola.mostrarMenu()
+                val opcion = consola.pedirOpcion("Elige una opción", 0, 6)
+                gestionarOpcion(opcion)
+            } while (opcion != 0)
+        } catch (e: Exception) {
+            logger.error("Error inesperado al gestionar el programa: ${e.message}", e)
+        }
     }
+
 
     private fun agregarSubtarea() {
         try {
-            // Listar las tareas disponibles para elegir la tarea madre
             consola.listarTareas(repo.tareas)
 
-            // Pedir al usuario que seleccione la tarea madre por ID
             val idTareaMadre = consola.pedirInfo("Introduce el ID de la tarea madre a la que deseas agregar una subtarea:").toIntOrNull()
             val tareaMadre = repo.tareas.find { it.getIdActividad().toInt() == idTareaMadre }
 
             if (tareaMadre != null) {
-                // Verificar si ya tiene una subtarea
-                if (tareaMadre.subTarea != null) {
-                    println("¡Error! La tarea madre ya tiene una subtarea asignada.")
-                    return
-                }
-
-                // Crear la subtarea
                 val subtarea = Tarea.creaInstancia(
                     consola.pedirInfo("Descripción de la subtarea:"),
                     consola.pedirInfo("Usuario asignado:"),
                     consola.pedirEtiqueta()
                 )
 
-                // Asignar la subtarea a la tarea madre
-                tareaMadre.subTarea = subtarea
-                repo.tareas.add(subtarea) // Guardar la subtarea en el repositorio
+                tareaMadre.agregarSubTarea(subtarea)
+                repo.tareas.add(subtarea)
 
-                println("¡Subtarea añadida con éxito!")
+                logger.trace("Subtarea añadida con éxito a la tarea madre ${tareaMadre.getIdActividad()}")
                 historial.agregarHistorial("Subtarea agregada a la tarea ${tareaMadre.getIdActividad()}")
             } else {
-                println("Error: No se encontró la tarea madre con el ID proporcionado.")
+                logger.warn("No se encontró la tarea madre con el ID proporcionado: $idTareaMadre")
             }
         } catch (e: Exception) {
-            println("¡Error! Detalle: ${e.message}")
+            logger.error("Error al agregar una subtarea: ${e.message}", e)
         }
     }
 
+
     private fun usuariosConActividades() {
-        for (usuario in servicioUsuario.usuariosRepo.usuarios) {
-            for (actividad in repo.actividades) {
-                if (actividad.obtenerUsuario() == usuario.nombre && !usuario.repoActividades.actividades.contains(actividad)) {
-                    usuario.repoActividades.actividades.add(actividad)
-                    when (actividad) {
-                        is Tarea -> usuario.repoActividades.tareas.add(actividad)
-                        is Evento -> usuario.repoActividades.eventos.add(actividad)
+        try {
+            for (usuario in servicioUsuario.usuariosRepo.usuarios) {
+                for (actividad in repo.actividades) {
+                    if (actividad.obtenerUsuario() == usuario.nombre && !usuario.repoActividades.actividades.contains(actividad)) {
+                        usuario.repoActividades.actividades.add(actividad)
+                        when (actividad) {
+                            is Tarea -> usuario.repoActividades.tareas.add(actividad)
+                            is Evento -> usuario.repoActividades.eventos.add(actividad)
+                        }
                     }
                 }
             }
+            logger.trace("Usuarios asociados con actividades correctamente.")
+        } catch (e: Exception) {
+            logger.error("Error al asociar usuarios con actividades: ${e.message}", e)
         }
     }
 

@@ -7,8 +7,8 @@ class Tarea private constructor(
 ) : Actividad(descripcion, usuario) {
     var estado = EstadoTarea.ABIERTA
 
-    // Una única sub-tarea asociada
-    var subTarea: Tarea? = null
+    // Lista de subtareas asociadas
+    val subTareas: MutableList<Tarea> = mutableListOf()
 
     private constructor(
         usuario: String,
@@ -24,13 +24,27 @@ class Tarea private constructor(
     }
 
     override fun obtenerDetalle(): String {
-        val subTareaDetalle = subTarea?.obtenerDetalle() ?: "Sin subtarea"
-        return super.obtenerDetalle() + ";$estado;$etiqueta;Subtarea:[$subTareaDetalle]"
+        val subTareasDetalle = if (subTareas.isEmpty()) {
+            "Sin subtareas"
+        } else {
+            subTareas.joinToString(separator = "\n") { "    - ${it.obtenerDetalle()}" }
+        }
+        return super.obtenerDetalle() + ";$estado;$etiqueta;\nSubtareas:\n$subTareasDetalle"
     }
 
     fun actualizarEstado(estado: EstadoTarea) {
         this.estado = estado
-        subTarea?.estado = estado // Sincroniza el estado con la subtarea
+        for(tarea in subTareas) {
+            tarea.estado = estado
+        }
+    }
+
+    fun agregarSubTarea(subTarea: Tarea) {
+        // Validar que las subtareas no puedan tener más subtareas
+        if (subTarea.subTareas.isNotEmpty()) {
+            throw IllegalArgumentException("Una subtarea no puede tener más subtareas.")
+        }
+        subTareas.add(subTarea)
     }
 
     companion object {
