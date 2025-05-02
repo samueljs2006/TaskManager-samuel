@@ -168,6 +168,10 @@ class ConsolaUI: Consola {
         return opcion
     }
 
+    override fun mostrarMensaje(s: String) {
+        println(s)
+    }
+
     fun preguntarSeguir(): Boolean {
         val opciones = mapOf("S" to true, "N" to false)
         var seguir: Boolean? = null

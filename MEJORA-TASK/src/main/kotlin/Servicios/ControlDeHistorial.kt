@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 open class ControlDeHistorial {
 
-    private val logger: Logger = LoggerFactory.getLogger(ControlDeHistorial::class.java)
+    protected open val logger: Logger = LoggerFactory.getLogger(ControlDeHistorial::class.java)
 
     fun agregarHistorial(msj: String) {
         val log = "${LocalDateTime.now()} -> $msj"
@@ -20,6 +20,10 @@ open class ControlDeHistorial {
     }
 
     companion object {
-        const val RUTA_HISTORIAL = "MEJORA-TASK/src/main/kotlin/Datos/Historial.txt"
+        var RUTA_HISTORIAL =
+            "${System.getProperty("user.dir")}/src/main/kotlin/Datos/Historial.txt".replace(
+                "/",
+                File.separator
+            )
     }
 }

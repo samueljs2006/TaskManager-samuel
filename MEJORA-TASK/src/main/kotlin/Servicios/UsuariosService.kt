@@ -6,6 +6,6 @@ import Presentacion.ConsolaUI
 class UsuariosService(
     consola: ConsolaUI
 ) {
-    val usuariosRepo = RepoUsuarios()
+    var usuariosRepo = RepoUsuarios()
 
 }

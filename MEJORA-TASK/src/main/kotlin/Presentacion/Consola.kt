@@ -9,4 +9,5 @@ interface Consola {
     fun listarActividades(actividades: MutableList<Actividad>)
     fun pedirInfo(msj:String):String
     fun pedirOpcion(msj:String,min:Int,max:Int):Int
+    fun mostrarMensaje(s: String)
 }

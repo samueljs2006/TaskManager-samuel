@@ -12,12 +12,13 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
 
-class ActividadService {
-    private val consola = ConsolaUI()
-    private val repo = RepoActividades()
-    private val servicioUsuario = UsuariosService(consola)
-    private val historial = ControlDeHistorial()
-    private val logger = LoggerFactory.getLogger(ActividadService::class.java)
+class ActividadService(
+    private val consola: ConsolaUI = ConsolaUI(),
+    var repo: RepoActividades = RepoActividades(),
+    val servicioUsuario: UsuariosService = UsuariosService(consola),
+    private val historial: ControlDeHistorial = ControlDeHistorial(),
+    private val logger: Logger = LoggerFactory.getLogger(ActividadService::class.java)
+) {
 
     fun gestionarPrograma() {
         try {
@@ -33,7 +34,7 @@ class ActividadService {
     }
 
 
-    private fun agregarSubtarea() {
+    fun agregarSubtarea() {
         try {
             // Listar las tareas disponibles para elegir la tarea madre
             consola.listarTareas(repo.tareas)
@@ -86,12 +87,14 @@ class ActividadService {
         }
     }
 
-    private fun cambiarEstado(tarea: Tarea) {
+
+    fun cambiarEstado(tarea: Tarea) {
         val estadoNuevo = consola.pedirInfo("CAMBIE EL ESTADO DE LA TAREA: ABIERTA, EN_PROGRESO, FINALIZADA")
         val estado = EstadoTarea.getEstado(estadoNuevo)
         if (estado != null) {
             tarea.actualizarEstado(estado)
             repo.cambiarEstado(tarea, historial, estado)
+            historial.agregarHistorial("Estado de la tarea cambiado a $estado") // Agregar historial aquí
             println("¡Estado de la tarea y su subtarea actualizado con éxito!")
         } else {
             println("¡Error! Estado no válido.")
@@ -118,36 +121,36 @@ class ActividadService {
         }while(opcion != 0)
     }
 
-    private fun filtrarPorEstado(){
+    fun filtrarPorEstado() {
         var opcion = -1
 
-        do{
-            try{
+        do {
+            try {
                 println("1) MOSTRAR ABIERTAS")
                 println("2) MOSTRAR EN PROGRESO")
                 println("3) MOSTRAR FINALIZADAS")
                 println("0) SALIR")
-                opcion = consola.pedirOpcion("Introduce opción",0,3)
+                opcion = consola.pedirOpcion("Introduce opción", 0, 3)
 
-                var filtrado: EstadoTarea? = null
-
-                when(opcion){
-                    1-> filtrado = EstadoTarea.ABIERTA
-                    2-> filtrado = EstadoTarea.EN_PROGRESO
-                    3-> filtrado = EstadoTarea.FINALIZADA
-                    else-> Exception("El valor introducido se sale del rango")
+                val filtrado: EstadoTarea? = when (opcion) {
+                    1 -> EstadoTarea.ABIERTA
+                    2 -> EstadoTarea.EN_PROGRESO
+                    3 -> EstadoTarea.FINALIZADA
+                    else -> null
                 }
 
-                for(tarea in repo.tareas){
-                    if(tarea.estado == filtrado){
-                        println(tarea.obtenerDetalle())
+                if (filtrado != null) {
+                    val tareasFiltradas = repo.tareas.filter { it.estado == filtrado }.toMutableList()
+                    if (tareasFiltradas.isNotEmpty()) {
+                        consola.listarTareas(tareasFiltradas)
+                    } else {
+                        consola.mostrarMensaje("No hay tareas con el estado solicitado.")
                     }
                 }
-
-            }catch(e: Exception){
+            } catch (e: Exception) {
                 println("¡Error! Detalle: $e")
             }
-        }while(opcion != 0)
+        } while (opcion != 0)
     }
 
     private fun filtradoPorUsuarios(){
@@ -331,7 +334,7 @@ class ActividadService {
         }
     }
 
-    private fun anadirActividad() {
+    fun anadirActividad() {
         val opcion = consola.pedirOpcion("¿Qué quieres crear?\n1) Tarea\n2) Evento\n0) Cancelar", 0, 2)
         if (opcion == 0) return
 
