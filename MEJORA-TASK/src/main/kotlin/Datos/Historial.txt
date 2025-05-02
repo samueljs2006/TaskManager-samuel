@@ -81,3 +81,5 @@ Se listan todas las actividades 2025-04-21T22:38:17.809004200
 Se listan todas las actividades 2025-04-21T22:48:38.993444
 Actividad agregada con éxito 2025-04-21T22:48:47.055732800
 Se listan todas las actividades 2025-04-21T22:48:48.569385700
+2025-05-02T12:50:56.759986100 -> Se ha mirado el resumen del programa
+2025-05-02T12:53:23.047869900 -> Se ha mirado el resumen del programa

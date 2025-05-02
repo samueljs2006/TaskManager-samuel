@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-    implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    implementation("org.slf4j:slf4j-simple:2.0.9")
 }
 
 tasks.test {

@@ -16,7 +16,7 @@ abstract class CalculoId {
     companion object {
         private val fechasUnicas = mutableListOf<String>()
         private val mapaIdsFechas: MutableMap<String, Int> = mutableMapOf()
-        const val RUTA_FICHERO_FECHAS = "src/main/kotlin/Datos/FechasId.txt"
+        const val RUTA_FICHERO_FECHAS = "MEJORA-TASK/src/main/kotlin/Datos/FechasId.txt"
 
         init {
             // Cargar datos al iniciar la clase

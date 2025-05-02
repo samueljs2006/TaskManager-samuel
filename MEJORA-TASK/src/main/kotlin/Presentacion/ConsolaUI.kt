@@ -91,11 +91,15 @@ class ConsolaUI: Consola {
     }
 
     fun listarTareas(tareas: MutableList<Tarea>) {
+        var contador = -1
         for (tarea in tareas) {
+            contador = 0
             println(tarea.obtenerDetalle())
-            tarea.subTarea?.let {
-                println("  Subtarea:")
-                println("    - ${it.obtenerDesc()}${it.obtenerUsuario()}${it.estado}")
+
+            for(subtarea in tarea.subTareas){
+                contador += 1
+                println("->  SUBTAREA$contador")
+                println("->        ${subtarea.obtenerDetalle()} ESTADO: ${subtarea.estado}")
             }
         }
     }
@@ -190,15 +194,17 @@ class ConsolaUI: Consola {
                     println("ID: ${actividad.getIdActividad()}, Usuario: ${actividad.obtenerUsuario()}, Descripción: ${actividad.obtenerDesc()}")
 
                     // Comprobar si tiene una subtarea
-                    if (actividad.subTarea == null) {
+                    if (actividad.subTareas == null) {
                         println("  -> No hay subtarea asociada.")
                     } else {
                         // Mostrar los detalles de la subtarea
-                        val subTarea = actividad.subTarea!!
-                        println("  -> Subtarea:")
-                        println("      - Descripción: ${subTarea.obtenerDesc()}")
-                        println("      - Usuario: ${subTarea.obtenerUsuario()}")
-                        println("      - Etiqueta: ${subTarea.etiqueta}")
+                        val subTareas = actividad.subTareas!!
+                        for(subTarea in subTareas){
+                            println("  -> Subtarea:")
+                            println("      - Descripción: ${subTarea.obtenerDesc()}")
+                            println("      - Usuario: ${subTarea.obtenerUsuario()}")
+                            println("      - Etiqueta: ${subTarea.etiqueta}")
+                        }
                     }
                 }
                 is Evento-> {

@@ -65,6 +65,6 @@ class RepoActividades(
     }
 
     companion object {
-        const val RUTA_FICHERO_ACTIVIDADES = "src/main/kotlin/Datos/Actividades.txt" // Usar const para constantes
+        const val RUTA_FICHERO_ACTIVIDADES = "MEJORA-TASK/src/main/kotlin/Datos/Actividades.txt" // Usar const para constantes
     }
 }

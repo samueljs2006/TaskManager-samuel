@@ -67,11 +67,6 @@ object Utils {
                         estado
                     )
 
-                    // Si existe una subtarea y no es "Sin subtarea", deserializarla
-                    if (!subTareaSerializada.isNullOrBlank() && subTareaSerializada != "Sin subtarea") {
-                        val subTarea = deserializarActividad(subTareaSerializada) as? Tarea
-                        tarea.subTarea = subTarea
-                    }
                     tarea
                 } else {
                     // Caso: Evento

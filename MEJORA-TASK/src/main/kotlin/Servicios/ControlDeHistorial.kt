@@ -20,6 +20,6 @@ open class ControlDeHistorial {
     }
 
     companion object {
-        const val RUTA_HISTORIAL = "src/main/kotlin/Datos/Historial.txt"
+        const val RUTA_HISTORIAL = "MEJORA-TASK/src/main/kotlin/Datos/Historial.txt"
     }
 }

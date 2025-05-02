@@ -22,6 +22,6 @@ class RepoUsuarios(
     }
 
     companion object{
-        val rutaFicheroUsuario = "src/main/kotlin/Datos/Usuarios.txt"
+        val rutaFicheroUsuario = "MEJORA-TASK/src/main/kotlin/Datos/Usuarios.txt"
     }
 }
