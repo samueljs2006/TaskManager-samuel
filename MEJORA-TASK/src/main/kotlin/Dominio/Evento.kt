@@ -58,16 +58,24 @@ class Evento private constructor(
             return Evento(descripcion,usuario,ubicacion,fecha)
         }
 
-        fun creaInstancia(
-            usuario:String,
-            id:String,
-            descripcion:String,
-            fechaCreacion:String,
-            fecha:String,
-            ubicacion:String
-        ):Evento
-        {
-            return Evento(usuario,id,descripcion,fechaCreacion,fecha,ubicacion)
+        data class EventoParams(
+            val usuario: String,
+            val id: String,
+            val descripcion: String,
+            val fechaCreacion: String,
+            val fecha: String,
+            val ubicacion: String
+        )
+
+        fun creaInstancia(params: EventoParams): Evento {
+            return Evento(
+                params.usuario,
+                params.id,
+                params.descripcion,
+                params.fechaCreacion,
+                params.fecha,
+                params.ubicacion
+            )
         }
     }
 }

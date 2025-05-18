@@ -191,29 +191,38 @@ class ConsolaUI: Consola {
     }
 
 
+
     override fun listarActividades(actividades: MutableList<Actividad>) {
-        val mostradas = mutableSetOf<String>() // Para evitar duplicados en la salida
+        val mostradas = mutableSetOf<String>()
+        actividades.forEach { actividad ->
+            mostrarActividadSiNoMostrada(actividad, mostradas)
+        }
+    }
 
-        for (actividad in actividades) {
-            val detalle = actividad.obtenerDetalle()
-            if (detalle !in mostradas) {
-                println(detalle)
-                mostradas.add(detalle) // Registrar como mostrada
+    private fun mostrarActividadSiNoMostrada(actividad: Actividad, mostradas: MutableSet<String>) {
+        val detalle = actividad.obtenerDetalle()
+        if (detalle in mostradas) return
 
-                when (actividad) {
-                    is Tarea -> {
-                        if (actividad.subTareas.isNotEmpty()) {
-                            println("Subtareas:")
-                            actividad.subTareas.forEach { subtarea ->
-                                println("    - ${subtarea.obtenerDetalle()}")
-                            }
-                        } else {
-                            println("Subtareas:\n    Sin subtareas")
-                        }
-                    }
-                    is Evento -> println("Sin subtareas (Evento).")
-                }
-            }
+        println(detalle)
+        mostradas.add(detalle)
+        imprimirDetalleActividad(actividad)
+    }
+
+    private fun imprimirDetalleActividad(actividad: Actividad) {
+        when (actividad) {
+            is Tarea -> imprimirSubtareas(actividad)
+            is Evento -> println("Sin subtareas (Evento).")
+        }
+    }
+
+    private fun imprimirSubtareas(tarea: Tarea) {
+        if (tarea.subTareas.isEmpty()) {
+            println("Subtareas:\n    Sin subtareas")
+            return
+        }
+        println("Subtareas:")
+        tarea.subTareas.forEach { subtarea ->
+            println("    - ${subtarea.obtenerDetalle()}")
         }
     }
 }

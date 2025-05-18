@@ -70,20 +70,33 @@ class ActividadService(
 
     private fun usuariosConActividades() {
         try {
-            for (usuario in servicioUsuario.usuariosRepo.usuarios) {
-                for (actividad in repo.actividades) {
-                    if (actividad.obtenerUsuario() == usuario.nombre && !usuario.repoActividades.actividades.contains(actividad)) {
-                        usuario.repoActividades.actividades.add(actividad)
-                        when (actividad) {
-                            is Tarea -> usuario.repoActividades.tareas.add(actividad)
-                            is Evento -> usuario.repoActividades.eventos.add(actividad)
-                        }
-                    }
-                }
+            servicioUsuario.usuariosRepo.usuarios.forEach { usuario ->
+                asociarActividadesAUsuario(usuario)
             }
             logger.trace("Usuarios asociados con actividades correctamente.")
         } catch (e: Exception) {
             logger.error("Error al asociar usuarios con actividades: ${e.message}", e)
+        }
+    }
+
+    private fun asociarActividadesAUsuario(usuario: Usuario) {
+        repo.actividades.forEach { actividad ->
+            if (debeAsociarActividad(usuario, actividad)) {
+                usuario.repoActividades.actividades.add(actividad)
+                agregarActividadPorTipo(usuario, actividad)
+            }
+        }
+    }
+
+    private fun debeAsociarActividad(usuario: Usuario, actividad: Actividad): Boolean {
+        return actividad.obtenerUsuario() == usuario.nombre &&
+                !usuario.repoActividades.actividades.contains(actividad)
+    }
+
+    private fun agregarActividadPorTipo(usuario: Usuario, actividad: Actividad) {
+        when (actividad) {
+            is Tarea -> usuario.repoActividades.tareas.add(actividad)
+            is Evento -> usuario.repoActividades.eventos.add(actividad)
         }
     }
 

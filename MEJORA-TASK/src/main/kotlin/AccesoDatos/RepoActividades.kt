@@ -54,22 +54,26 @@ class RepoActividades(
         }
     }
 
+    // Kotlin
     private fun cargarActividades() {
         val ficheroActividades = Utils.leerArchivo(RUTA_FICHERO_ACTIVIDADES)
         for (linea in ficheroActividades) {
-            try {
-                val actividad = Utils.deserializarActividad(linea)
-                if (actividad != null && !actividades.contains(actividad)) { // Verificar que no sea null y evitar duplicados
-                    actividades.add(actividad)
+            cargarActividadDesdeLinea(linea)
+        }
+    }
 
-                    when (actividad) {
-                        is Tarea -> tareas.add(actividad)
-                        is Evento -> eventos.add(actividad)
-                    }
-                }
-            } catch (e: Exception) {
-                println("Error al cargar una actividad desde el fichero: ${e.message}")
+    private fun cargarActividadDesdeLinea(linea: String) {
+        try {
+            val actividad = Utils.deserializarActividad(linea)
+            if (actividad == null || actividades.contains(actividad)) return
+
+            actividades.add(actividad)
+            when (actividad) {
+                is Tarea -> tareas.add(actividad)
+                is Evento -> eventos.add(actividad)
             }
+        } catch (e: Exception) {
+            println("Error al cargar una actividad desde el fichero: ${e.message}")
         }
     }
 
