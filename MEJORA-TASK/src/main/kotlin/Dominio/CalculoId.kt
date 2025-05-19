@@ -2,61 +2,79 @@ package dominio
 
 import java.io.File
 
+/**
+ * Clase abstracta para el cálculo y gestión de identificadores únicos basados en fechas.
+ *
+ * Su objetivo es generar un identificador incremental único para cada fecha dada,
+ * almacenando la relación fecha-id en memoria y en un fichero persistente.
+ *
+ * El identificador se utiliza, por ejemplo, para asignar IDs únicos a eventos o tareas
+ * creados en el sistema en una fecha concreta.
+ */
 abstract class CalculoId {
-    /**
-     * Genera un identificador único basado en:
-     * - La fecha convertida a `YYYYMMDD` (año, mes y día).
-     * - Un contador incremental que asegura un valor único en caso de múltiples eventos en la misma fecha.
-     *
-     * El contador se almacena en `mapaIdsFechas`, que mantiene el número de eventos generados para cada día.
-     *
-     * @param fecha La fecha en formato `dd-MM-yyyy` utilizada para generar el identificador único.
-     * @return Un identificador único en formato `N`, donde `N` es el contador del evento en ese día.
-     */
     companion object {
+        /**
+         * Lista de fechas únicas registradas.
+         */
         private val fechasUnicas = mutableListOf<String>()
+
+        /**
+         * Mapa que asocia cada fecha con su identificador incremental.
+         */
         private val mapaIdsFechas: MutableMap<String, Int> = mutableMapOf()
+
+        /**
+         * Ruta del fichero donde se almacenan las fechas y sus IDs.
+         */
         const val RUTA_FICHERO_FECHAS = "MEJORA-TASK/src/main/kotlin/Datos/FechasId.txt"
 
         init {
-            // Cargar datos al iniciar la clase
+            // Carga las fechas e IDs existentes desde el fichero al iniciar la clase.
             cargarFechasDesdeFichero()
         }
 
+        /**
+         * Genera un identificador único para una fecha dada.
+         *
+         * Si la fecha es nueva, se le asigna un nuevo ID incremental y se guarda en el fichero.
+         * Si la fecha ya existe, devuelve el ID previamente asignado.
+         *
+         * @param fecha Fecha en formato `dd-MM-yyyy`.
+         * @return Identificador único asociado a la fecha.
+         * @throws IllegalArgumentException Si la fecha es nula o vacía.
+         */
         fun generarId(fecha: String?): Int {
-            // Validar que la fecha no sea nula
             require(!fecha.isNullOrBlank()) { "Error: La fecha no puede ser nula o vacía." }
 
-            // Si la fecha no está registrada, se agrega y asigna un nuevo ID.
             return if (fecha !in fechasUnicas) {
                 fechasUnicas.add(fecha)
                 val id = fechasUnicas.size
-                // Guardar en el fichero y actualizar el mapa
                 File(RUTA_FICHERO_FECHAS).appendText("Fecha:$fecha ID:$id\n")
                 mapaIdsFechas[fecha] = id
                 id
             } else {
-                // Recupera el ID existente para la fecha.
                 mapaIdsFechas[fecha] ?: error("Error: La fecha $fecha no tiene un ID asignado.")
             }
         }
 
+        /**
+         * Carga las fechas e identificadores desde el fichero persistente.
+         *
+         * Si el fichero no existe, lo crea vacío.
+         * Procesa cada línea con el formato `Fecha:<fecha> ID:<id>`.
+         */
         private fun cargarFechasDesdeFichero() {
             val archivo = File(RUTA_FICHERO_FECHAS)
             if (!archivo.exists()) {
-                // Crear el fichero si no existe
                 archivo.createNewFile()
                 return
             }
 
             archivo.forEachLine { linea ->
                 try {
-                    // Procesar cada línea con el formato "Fecha:<fecha> ID:<id>"
                     val partes = linea.split(" ")
                     val fecha = partes[0].split(":")[1]
                     val id = partes[1].split(":")[1].toInt()
-
-                    // Añadir a las estructuras internas
                     fechasUnicas.add(fecha)
                     mapaIdsFechas[fecha] = id
                 } catch (e: Exception) {
