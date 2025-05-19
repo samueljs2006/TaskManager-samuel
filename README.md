@@ -49,7 +49,8 @@ Lo vamos hacer con  evento.kt
 
 ![img_10.png](img_10.png)
 
-dewspues de la refactorización:
+despues de la refactorización:
+
 ![img_13.png](img_13.png)
 
 
