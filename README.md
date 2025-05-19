@@ -52,3 +52,5 @@ Se extrajeron partes en funciones auxiliares y se usaron guard clauses para redu
 punto 5 una opción de configuración
 Gracias a esta línea baseline = file("config/detekt/baseline.xml") se consigue que los errores que ya se hayan mostrado antes no se vuelvan a mostrar.
 ![img_12.png](img_12.png)
+
+PATATA
