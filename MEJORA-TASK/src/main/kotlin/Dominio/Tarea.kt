@@ -1,4 +1,4 @@
-package Dominio
+package dominio
 
 class Tarea private constructor(
     descripcion: String,
@@ -62,24 +62,15 @@ class Tarea private constructor(
             return Tarea(descripcion, usuario, etiqueta)
         }
 
-        data class TareaParams(
-            val usuario: String,
-            val id: String,
-            val etiqueta: EtiquetasTareas,
-            val fechaCreacion: String,
-            val descripcion: String,
-            val estado: String
-        )
-
-        fun creaInstancia(params: TareaParams): Tarea {
-            return Tarea(
-                params.usuario,
-                params.id,
-                params.etiqueta,
-                params.fechaCreacion,
-                params.descripcion,
-                params.estado
-            )
+        fun creaInstancia(
+            usuario: String,
+            id: String,
+            etiqueta: EtiquetasTareas,
+            fechaCreacion: String,
+            descripcion: String,
+            estado: String
+        ): Tarea {
+            return Tarea(usuario, id, etiqueta, fechaCreacion, descripcion, estado)
         }
     }
 }

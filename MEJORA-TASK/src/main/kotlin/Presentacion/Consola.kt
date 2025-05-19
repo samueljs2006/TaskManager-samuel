@@ -1,7 +1,7 @@
-package Presentacion
-import AccesoDatos.RepoActividades
-import AccesoDatos.RepoUsuarios
-import Dominio.Actividad
+package presentacion
+import accesodatos.RepoActividades
+import accesodatos.RepoUsuarios
+import dominio.Actividad
 
 interface Consola {
     fun mostrarMenu()
@@ -9,5 +9,4 @@ interface Consola {
     fun listarActividades(actividades: MutableList<Actividad>)
     fun pedirInfo(msj:String):String
     fun pedirOpcion(msj:String,min:Int,max:Int):Int
-    fun mostrarMensaje(s: String)
 }

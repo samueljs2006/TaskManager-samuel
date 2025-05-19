@@ -6,7 +6,6 @@ plugins {
 detekt {
     buildUponDefaultConfig = true
     baseline = file("config/detekt/baseline.xml")
-
 }
 
 group = "es.prog2425.calcprueba"
@@ -16,9 +15,14 @@ repositories {
     mavenCentral()
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("org.slf4j:slf4j-simple:2.0.9")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }
 
 tasks.test {

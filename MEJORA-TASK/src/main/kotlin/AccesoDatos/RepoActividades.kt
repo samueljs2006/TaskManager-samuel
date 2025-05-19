@@ -1,11 +1,12 @@
-package AccesoDatos
+package accesodatos
 
-import Dominio.Actividad
-import Dominio.EstadoTarea
-import Dominio.Evento
-import Dominio.Tarea
-import Servicios.ControlDeHistorial
+import dominio.Actividad
+import dominio.EstadoTarea
+import dominio.Evento
+import dominio.Tarea
+import servicios.ControlDeHistorial
 import java.io.File
+import java.nio.file.Paths
 
 class RepoActividades(
     override val actividades: MutableList<Actividad> = mutableListOf(),
@@ -17,6 +18,32 @@ class RepoActividades(
         cargarActividades()
     }
 
+    private fun cargarActividades() {
+        val ficheroActividades = Utils.leerArchivo(RUTA_FICHERO_ACTIVIDADES)
+        for (linea in ficheroActividades) {
+            procesarLineaActividad(linea)
+        }
+    }
+    /**
+     * Procesa una línea del archivo de actividades y la convierte en un objeto Actividad.
+     * Si la actividad no existe ya en la lista, se añade a la lista correspondiente.
+     *
+     * @param linea La línea del archivo que representa una actividad.
+     */
+    private fun procesarLineaActividad(linea: String) {
+        try {
+            val actividad = Utils.deserializarActividad(linea)
+            if (actividad != null && !actividades.contains(actividad)) {
+                actividades.add(actividad)
+                when (actividad) {
+                    is Tarea -> tareas.add(actividad)
+                    is Evento -> eventos.add(actividad)
+                }
+            }
+        } catch (e: Exception) {
+            println("Error al cargar una actividad desde el fichero: ${e.message}")
+        }
+    }
 
     fun cambiarEstado(tarea: Tarea, historial: ControlDeHistorial, estadoTarea: EstadoTarea) {
         val id = tarea.getIdActividad()
@@ -54,34 +81,10 @@ class RepoActividades(
         }
     }
 
-    // Kotlin
-    private fun cargarActividades() {
-        val ficheroActividades = Utils.leerArchivo(RUTA_FICHERO_ACTIVIDADES)
-        for (linea in ficheroActividades) {
-            cargarActividadDesdeLinea(linea)
-        }
-    }
 
-    private fun cargarActividadDesdeLinea(linea: String) {
-        try {
-            val actividad = Utils.deserializarActividad(linea)
-            if (actividad == null || actividades.contains(actividad)) return
-
-            actividades.add(actividad)
-            when (actividad) {
-                is Tarea -> tareas.add(actividad)
-                is Evento -> eventos.add(actividad)
-            }
-        } catch (e: Exception) {
-            println("Error al cargar una actividad desde el fichero: ${e.message}")
-        }
-    }
 
     companion object {
-        val RUTA_FICHERO_ACTIVIDADES =
-            "${System.getProperty("user.dir")}/src/main/kotlin/Datos/Actividades.txt".replace(
-                "/",
-                File.separator
-            )
+        val ruta_relativa = "MEJORA-TASK/src/main/kotlin/Datos/Actividades.txt"
+        val RUTA_FICHERO_ACTIVIDADES = Paths.get(ruta_relativa).toAbsolutePath().toString() // Usar const para constantes
     }
 }

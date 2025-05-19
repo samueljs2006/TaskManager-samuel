@@ -1,4 +1,4 @@
-package Servicios
+package servicios
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 open class ControlDeHistorial {
 
-    protected open val logger: Logger = LoggerFactory.getLogger(ControlDeHistorial::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(ControlDeHistorial::class.java)
 
     fun agregarHistorial(msj: String) {
         val log = "${LocalDateTime.now()} -> $msj"
@@ -20,10 +20,6 @@ open class ControlDeHistorial {
     }
 
     companion object {
-        var RUTA_HISTORIAL =
-            "${System.getProperty("user.dir")}/src/main/kotlin/Datos/Historial.txt".replace(
-                "/",
-                File.separator
-            )
+        const val RUTA_HISTORIAL = "MEJORA-TASK/src/main/kotlin/Datos/Historial.txt"
     }
 }

@@ -1,4 +1,4 @@
-package Dominio
+package dominio
 
 enum class EtiquetasTareas(desc:String) {
     URGENTE("Urgente"),

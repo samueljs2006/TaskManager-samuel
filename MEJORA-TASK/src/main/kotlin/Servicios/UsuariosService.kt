@@ -1,11 +1,11 @@
-package Servicios
+package servicios
 
-import AccesoDatos.RepoUsuarios
-import Presentacion.ConsolaUI
+import accesodatos.RepoUsuarios
+import presentacion.ConsolaUI
 
 class UsuariosService(
     consola: ConsolaUI
 ) {
-    var usuariosRepo = RepoUsuarios()
+    val usuariosRepo = RepoUsuarios()
 
 }
