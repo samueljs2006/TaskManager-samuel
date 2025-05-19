@@ -1,11 +1,6 @@
 plugins {
     kotlin("jvm") version "2.0.21"
-    id("io.gitlab.arturbosch.detekt") version "1.23.6"
-}
-
-detekt {
-    buildUponDefaultConfig = true
-    baseline = file("config/detekt/baseline.xml")
+    id("org.jetbrains.dokka") version "1.9.20"
 }
 
 group = "es.prog2425.calcprueba"
@@ -15,14 +10,9 @@ repositories {
     mavenCentral()
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("org.slf4j:slf4j-simple:2.0.9")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }
 
 tasks.test {
